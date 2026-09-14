@@ -1,0 +1,3113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OCDS - Comunidade Alegria da Sagrada Face</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- SheetJS para exportação real para Excel .xlsx -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Supabase Client CDN para Sincronização em Tempo Real na Nuvem -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --carmel-brown: #6e473b;
+            --carmel-dark: #4a2f26;
+            --carmel-cream: #fbf9f6;
+            --carmel-gold: #c29b38;
+        }
+        body {
+            background-color: #f8f6f2;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        .overflow-x-auto, .overflow-y-auto {
+            -webkit-overflow-scrolling: touch;
+        }
+        input, select, button {
+            font-size: 16px !important;
+        }
+        @media (min-width: 640px) {
+            input, select, button {
+                font-size: 14px !important;
+            }
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; }
+            .container-print { box-shadow: none !important; border: none !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 border-t-8 border-[#6e473b] my-auto">
+            <div class="text-center mb-6">
+                <div class="mb-3 flex justify-center items-center h-20">
+                    <div class="brasao-slot h-20 w-16 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 200" class="h-full w-auto max-h-full object-contain inline-block" style="filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2));">
+  <defs>
+    <linearGradient id="carmelGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCE082" />
+      <stop offset="40%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#9A7B1C" />
+    </linearGradient>
+    <linearGradient id="carmelBrown" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7D5141" />
+      <stop offset="100%" stop-color="#4A2F26" />
+    </linearGradient>
+    <linearGradient id="carmelWhite" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F5EFE6" />
+    </linearGradient>
+    <linearGradient id="bladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#CBD5E1" />
+      <stop offset="100%" stop-color="#94A3B8" />
+    </linearGradient>
+    <linearGradient id="flameGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EF4444" />
+      <stop offset="50%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#FDE047" />
+    </linearGradient>
+  </defs>
+
+  <!-- 12 ESTRELAS DA COROA EM ARCO -->
+  <g fill="url(#carmelGold)" stroke="#B45309" stroke-width="0.3">
+    <polygon points="25,32 26.5,35 30,35 27,37 28.5,40 25,38 21.5,40 23,37 20,35 23.5,35" />
+    <polygon points="36,23 37.5,26 41,26 38,28 39.5,31 36,29 32.5,31 34,28 31,26 34.5,26" />
+    <polygon points="49,16 50.5,19 54,19 51,21 52.5,24 49,22 45.5,24 47,21 44,19 47.5,19" />
+    <polygon points="63,11 64.5,14 68,14 65,16 66.5,19 63,17 59.5,19 61,16 58,14 61.5,14" />
+    <polygon points="78,9 79.5,12 83,12 80,14 81.5,17 78,15 74.5,17 76,14 73,12 76.5,12" />
+    <polygon points="93,9 94.5,12 98,12 95,14 96.5,17 93,15 89.5,17 91,14 88,12 91.5,12" />
+    <polygon points="107,11 108.5,14 112,14 109,16 110.5,19 107,17 103.5,19 105,16 102,14 105.5,14" />
+    <polygon points="121,16 122.5,19 126,19 123,21 124.5,24 121,22 117.5,24 119,21 116,19 119.5,19" />
+    <polygon points="134,23 135.5,26 139,26 136,28 137.5,31 134,29 130.5,31 132,28 129,26 132.5,26" />
+    <polygon points="144,32 145.5,35 149,35 146,37 147.5,40 144,38 140.5,40 142,37 139,35 142.5,35" />
+  </g>
+
+  <!-- BRAÇO DE ELIAS COM ESPADA FLAMEJANTE -->
+  <g id="bracoElias">
+    <path d="M72,38 Q65,30 55,25 Q50,22 45,28 Q43,32 50,34 Q60,37 72,42 Z" fill="url(#bladeGrad)" stroke="#475569" stroke-width="0.8"/>
+    <circle cx="48" cy="27" r="3.5" fill="#E2E8F0" stroke="#475569" stroke-width="0.7"/>
+    <rect x="45" y="24" width="7" height="2" rx="0.8" fill="url(#carmelGold)" stroke="#78350F" stroke-width="0.5"/>
+    <rect x="47.5" y="26" width="2" height="4" fill="url(#carmelGold)"/>
+    <circle cx="48.5" cy="30.5" r="1.2" fill="url(#carmelGold)"/>
+    <path d="M48,24 Q45,18 48,13 Q51,8 48,2 Q47,7 44,12 Q42,17 47,24 Z" fill="url(#bladeGrad)" stroke="#64748B" stroke-width="0.5"/>
+    <path d="M43,21 Q38,15 44,9 Q41,7 48,2 Q54,8 51,14 Q56,18 49,23 Q52,16 48,10 Q44,16 43,21 Z" fill="url(#flameGrad)" opacity="0.85"/>
+  </g>
+
+  <!-- COROA DUCAL DOURADA -->
+  <g id="coroaDucal">
+    <path d="M52,48 L108,48 L103,36 L94,42 L80,33 L66,42 L57,36 Z" fill="url(#carmelGold)" stroke="#78350F" stroke-width="0.8"/>
+    <rect x="52" y="45" width="56" height="5" rx="1.5" fill="url(#carmelGold)" stroke="#78350F" stroke-width="0.8"/>
+    <circle cx="58" cy="47.5" r="1.5" fill="#DC2626" />
+    <circle cx="66" cy="47.5" r="1.5" fill="#16A34A" />
+    <circle cx="80" cy="47.5" r="1.8" fill="#DC2626" />
+    <circle cx="94" cy="47.5" r="1.5" fill="#16A34A" />
+    <circle cx="102" cy="47.5" r="1.5" fill="#DC2626" />
+    <circle cx="57" cy="36" r="2" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.6"/>
+    <circle cx="80" cy="33" r="2.3" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.6"/>
+    <circle cx="103" cy="36" r="2" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.6"/>
+  </g>
+
+  <!-- ESCUDO HERALDICO DO CARMELO -->
+  <g id="escudoCarmelo">
+    <path d="M30,50 Q80,47 130,50 Q132,105 80,155 Q28,105 30,50 Z" fill="url(#carmelWhite)" stroke="url(#carmelGold)" stroke-width="3"/>
+    <path d="M33,52 Q80,49 127,52 Q129,103 80,151 Q31,103 33,52 Z" fill="none" stroke="#6E473B" stroke-width="1" opacity="0.6"/>
+
+    <!-- MONTE CARMELO -->
+    <path d="M31,104 Q60,100 70,82 Q76,73 80,73 Q84,73 90,82 Q100,100 129,104 Q116,135 80,153 Q44,135 31,104 Z" fill="url(#carmelBrown)" stroke="#3E2723" stroke-width="1.2"/>
+
+    <!-- CRUZ LATINA NO TOPO DO MONTE -->
+    <g id="cruzMonte" fill="url(#carmelBrown)" stroke="#3E2723" stroke-width="0.8">
+      <rect x="78" y="55" width="4" height="22" rx="0.5" />
+      <rect x="72" y="60" width="16" height="4" rx="0.5" />
+    </g>
+
+    <!-- TRÊS ESTRELAS DO CARMELO -->
+    <polygon points="80,106 82.5,113 89,113 83.5,117 86,123.5 80,119 74,123.5 76.5,117 71,113 77.5,113" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8" />
+    <circle cx="80" cy="116" r="1.2" fill="#D4AF37" />
+    <polygon points="52,65 54,70 59,70 55,73 57,78 52,75 47,78 49,73 45,70 50,70" fill="url(#carmelGold)" stroke="#B45309" stroke-width="0.7"/>
+    <polygon points="108,65 110,70 115,70 111,73 113,78 108,75 103,78 105,73 101,70 106,70" fill="url(#carmelGold)" stroke="#B45309" stroke-width="0.7"/>
+  </g>
+
+  <!-- LISTEL COM O LEMA SAGRADO -->
+  <g id="listelLema">
+    <path d="M15,165 Q45,158 80,165 Q115,158 145,165 L140,177 Q115,170 80,177 Q45,170 20,177 Z" fill="#FDFBF7" stroke="url(#carmelGold)" stroke-width="1.2"/>
+    <path d="M15,165 L20,177 L10,173 Z" fill="#E2D8CD" stroke="#9A7B1C" stroke-width="0.6"/>
+    <path d="M145,165 L140,177 L150,173 Z" fill="#E2D8CD" stroke="#9A7B1C" stroke-width="0.6"/>
+    <text x="80" y="173" font-family="'Times New Roman', Georgia, serif" font-size="6.5" font-weight="bold" fill="#4A2F26" text-anchor="middle" letter-spacing="0.4">
+      ZELO ZELATUS SUM PRO DOMINO
+    </text>
+    <rect x="68" y="181" width="24" height="8" rx="2" fill="url(#carmelBrown)" stroke="url(#carmelGold)" stroke-width="0.8"/>
+    <text x="80" y="187.5" font-family="sans-serif" font-size="5.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">
+      O.C.D.S.
+    </text>
+  </g>
+</svg>
+                    </div>
+                </div>
+                <h2 class="text-xl font-bold text-[#6e473b] leading-tight">Comunidade Alegria da Sagrada Face</h2>
+                <p class="text-xs font-semibold text-slate-500 uppercase mt-0.5">Regional São João da Cruz — OCDS</p>
+                <div class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-semibold border border-emerald-200">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Nuvem Conectada (Supabase)
+                </div>
+            </div>
+            
+            <form id="formLogin" class="space-y-4" onsubmit="handleLogin(event)" autocomplete="off">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">E-mail</label>
+                    <input type="email" id="loginUser" placeholder="Digite seu e-mail..." autocomplete="email" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#6e473b] focus:outline-none text-sm" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Senha</label>
+                    <input type="password" id="loginPass" placeholder="Digite sua senha..." autocomplete="current-password" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#6e473b] focus:outline-none text-sm" required>
+                </div>
+                <div id="loginError" class="text-xs text-red-600 hidden font-medium text-center p-2 bg-red-50 rounded border border-red-200">
+                    E-mail ou senha incorretos. Tente novamente.
+                </div>
+                <button type="submit" id="btnSubmitLogin" class="w-full bg-[#6e473b] hover:bg-[#4a2f26] text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-md">
+                    Entrar no Sistema
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- HEADER / NAVBAR -->
+    <header class="bg-[#6e473b] text-white shadow-lg sticky top-0 z-40 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/10 hover:bg-white/20 p-1 rounded-xl flex items-center justify-center transition h-14 w-12 shrink-0">
+                    <div class="brasao-slot h-12 w-11 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 200" class="h-full w-auto max-h-full object-contain inline-block" style="filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2));">
+  <defs>
+    <linearGradient id="carmelGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCE082" />
+      <stop offset="40%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#9A7B1C" />
+    </linearGradient>
+    <linearGradient id="carmelBrown" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7D5141" />
+      <stop offset="100%" stop-color="#4A2F26" />
+    </linearGradient>
+    <linearGradient id="carmelWhite" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F5EFE6" />
+    </linearGradient>
+    <linearGradient id="bladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#CBD5E1" />
+      <stop offset="100%" stop-color="#94A3B8" />
+    </linearGradient>
+    <linearGradient id="flameGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EF4444" />
+      <stop offset="50%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#FDE047" />
+    </linearGradient>
+  </defs>
+
+  <!-- 12 ESTRELAS DA COROA EM ARCO -->
+  <g fill="url(#carmelGold)" stroke="#B45309" stroke-width="0.3">
+    <polygon points="25,32 26.5,35 30,35 27,37 28.5,40 25,38 21.5,40 23,37 20,35 23.5,35" />
+    <polygon points="36,23 37.5,26 41,26 38,28 39.5,31 36,29 32.5,31 34,28 31,26 34.5,26" />
+    <polygon points="49,16 50.5,19 54,19 51,21 52.5,24 49,22 45.5,24 47,21 44,19 47.5,19" />
+    <polygon points="63,11 64.5,14 68,14 65,16 66.5,19 63,17 59.5,19 61,16 58,14 61.5,14" />
+    <polygon points="78,9 79.5,12 83,12 80,14 81.5,17 78,15 74.5,17 76,14 73,12 76.5,12" />
+    <polygon points="93,9 94.5,12 98,12 95,14 96.5,17 93,15 89.5,17 91,14 88,12 91.5,12" />
+    <polygon points="107,11 108.5,14 112,14 109,16 110.5,19 107,17 103.5,19 105,16 102,14 105.5,14" />
+    <polygon points="121,16 122.5,19 126,19 123,21 124.5,24 121,22 117.5,24 119,21 116,19 119.5,19" />
+    <polygon points="134,23 135.5,26 139,26 136,28 137.5,31 134,29 130.5,31 132,28 129,26 132.5,26" />
+    <polygon points="144,32 145.5,35 149,35 146,37 147.5,40 144,38 140.5,40 142,37 139,35 142.5,35" />
+  </g>
+
+  <!-- BRAÇO DE ELIAS COM ESPADA FLAMEJANTE -->
+  <g id="bracoElias">
+    <path d="M72,38 Q65,30 55,25 Q50,22 45,28 Q43,32 50,34 Q60,37 72,42 Z" fill="url(#bladeGrad)" stroke="#475569" stroke-width="0.8"/>
+    <circle cx="48" cy="27" r="3.5" fill="#E2E8F0" stroke="#475569" stroke-width="0.7"/>
+    <rect x="45" y="24" width="7" height="2" rx="0.8" fill="url(#carmelGold)" stroke="#78350F" stroke-width="0.5"/>
+    <rect x="47.5" y="26" width="2" height="4" fill="url(#carmelGold)"/>
+    <circle cx="48.5" cy="30.5" r="1.2" fill="url(#carmelGold)"/>
+    <path d="M48,24 Q45,18 48,13 Q51,8 48,2 Q47,7 44,12 Q42,17 47,24 Z" fill="url(#bladeGrad)" stroke="#64748B" stroke-width="0.5"/>
+    <path d="M43,21 Q38,15 44,9 Q41,7 48,2 Q54,8 51,14 Q56,18 49,23 Q52,16 48,10 Q44,16 43,21 Z" fill="url(#flameGrad)" opacity="0.85"/>
+  </g>
+
+  <!-- COROA DUCAL DOURADA -->
+  <g id="coroaDucal">
+    <path d="M52,48 L108,48 L103,36 L94,42 L80,33 L66,42 L57,36 Z" fill="url(#carmelGold)" stroke="#78350F" stroke-width="0.8"/>
+    <rect x="52" y="45" width="56" height="5" rx="1.5" fill="url(#carmelGold)" stroke="#78350F" stroke-width="0.8"/>
+    <circle cx="58" cy="47.5" r="1.5" fill="#DC2626" />
+    <circle cx="66" cy="47.5" r="1.5" fill="#16A34A" />
+    <circle cx="80" cy="47.5" r="1.8" fill="#DC2626" />
+    <circle cx="94" cy="47.5" r="1.5" fill="#16A34A" />
+    <circle cx="102" cy="47.5" r="1.5" fill="#DC2626" />
+    <circle cx="57" cy="36" r="2" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.6"/>
+    <circle cx="80" cy="33" r="2.3" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.6"/>
+    <circle cx="103" cy="36" r="2" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.6"/>
+  </g>
+
+  <!-- ESCUDO HERALDICO DO CARMELO -->
+  <g id="escudoCarmelo">
+    <path d="M30,50 Q80,47 130,50 Q132,105 80,155 Q28,105 30,50 Z" fill="url(#carmelWhite)" stroke="url(#carmelGold)" stroke-width="3"/>
+    <path d="M33,52 Q80,49 127,52 Q129,103 80,151 Q31,103 33,52 Z" fill="none" stroke="#6E473B" stroke-width="1" opacity="0.6"/>
+
+    <!-- MONTE CARMELO -->
+    <path d="M31,104 Q60,100 70,82 Q76,73 80,73 Q84,73 90,82 Q100,100 129,104 Q116,135 80,153 Q44,135 31,104 Z" fill="url(#carmelBrown)" stroke="#3E2723" stroke-width="1.2"/>
+
+    <!-- CRUZ LATINA NO TOPO DO MONTE -->
+    <g id="cruzMonte" fill="url(#carmelBrown)" stroke="#3E2723" stroke-width="0.8">
+      <rect x="78" y="55" width="4" height="22" rx="0.5" />
+      <rect x="72" y="60" width="16" height="4" rx="0.5" />
+    </g>
+
+    <!-- TRÊS ESTRELAS DO CARMELO -->
+    <polygon points="80,106 82.5,113 89,113 83.5,117 86,123.5 80,119 74,123.5 76.5,117 71,113 77.5,113" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8" />
+    <circle cx="80" cy="116" r="1.2" fill="#D4AF37" />
+    <polygon points="52,65 54,70 59,70 55,73 57,78 52,75 47,78 49,73 45,70 50,70" fill="url(#carmelGold)" stroke="#B45309" stroke-width="0.7"/>
+    <polygon points="108,65 110,70 115,70 111,73 113,78 108,75 103,78 105,73 101,70 106,70" fill="url(#carmelGold)" stroke="#B45309" stroke-width="0.7"/>
+  </g>
+
+  <!-- LISTEL COM O LEMA SAGRADO -->
+  <g id="listelLema">
+    <path d="M15,165 Q45,158 80,165 Q115,158 145,165 L140,177 Q115,170 80,177 Q45,170 20,177 Z" fill="#FDFBF7" stroke="url(#carmelGold)" stroke-width="1.2"/>
+    <path d="M15,165 L20,177 L10,173 Z" fill="#E2D8CD" stroke="#9A7B1C" stroke-width="0.6"/>
+    <path d="M145,165 L140,177 L150,173 Z" fill="#E2D8CD" stroke="#9A7B1C" stroke-width="0.6"/>
+    <text x="80" y="173" font-family="'Times New Roman', Georgia, serif" font-size="6.5" font-weight="bold" fill="#4A2F26" text-anchor="middle" letter-spacing="0.4">
+      ZELO ZELATUS SUM PRO DOMINO
+    </text>
+    <rect x="68" y="181" width="24" height="8" rx="2" fill="url(#carmelBrown)" stroke="url(#carmelGold)" stroke-width="0.8"/>
+    <text x="80" y="187.5" font-family="sans-serif" font-size="5.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">
+      O.C.D.S.
+    </text>
+  </g>
+</svg>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="font-bold text-sm sm:text-base md:text-lg leading-tight">Comunidade Alegria da Sagrada Face</h1>
+                    <p class="text-[11px] sm:text-xs text-amber-200/80">Regional São João da Cruz — OCDS</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <div class="text-right hidden sm:block">
+                    <span id="headerUserName" class="text-xs font-bold text-white block">Administrador</span>
+                    <span id="headerUserLevel" class="text-[10px] bg-amber-900/40 text-amber-200 px-2 py-0.5 rounded-full uppercase">Acesso Total</span>
+                </div>
+                <button onclick="handleLogout()" class="text-xs bg-black/20 hover:bg-black/40 text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Sair
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="bg-white border-b border-slate-200 sticky top-16 z-30 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-2 sm:space-x-4 overflow-x-auto py-2">
+            <button onclick="switchTab('dashboard')" id="tabBtn-dashboard" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-[#6e473b] bg-amber-50 flex items-center gap-2 transition whitespace-nowrap">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Painel Geral
+            </button>
+            <button onclick="switchTab('membros')" id="tabBtn-membros" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-[#6e473b] hover:bg-slate-50 flex items-center gap-2 transition whitespace-nowrap">
+                <i data-lucide="users" class="w-4 h-4"></i> Membros (<span id="countMembrosBadge">32</span>)
+            </button>
+            <button onclick="switchTab('mensalidades')" id="tabBtn-mensalidades" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-[#6e473b] hover:bg-slate-50 flex items-center gap-2 transition whitespace-nowrap">
+                <i data-lucide="wallet" class="w-4 h-4"></i> Mensalidades
+            </button>
+            <button onclick="switchTab('financeiro')" id="tabBtn-financeiro" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-[#6e473b] hover:bg-slate-50 flex items-center gap-2 transition whitespace-nowrap">
+                <i data-lucide="arrow-left-right" class="w-4 h-4"></i> Livro Caixa (Financeiro)
+            </button>
+            <button onclick="switchTab('relatorios')" id="tabBtn-relatorios" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-[#6e473b] hover:bg-slate-50 flex items-center gap-2 transition whitespace-nowrap">
+                <i data-lucide="file-text" class="w-4 h-4"></i> Relatórios
+            </button>
+            <button onclick="switchTab('usuarios')" id="tabBtn-usuarios" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-[#6e473b] hover:bg-slate-50 flex items-center gap-2 transition whitespace-nowrap">
+                <i data-lucide="shield-check" class="w-4 h-4"></i> Senhas & Usuários
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+
+        <!-- 1. DASHBOARD -->
+        <section id="tab-dashboard" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="p-3 bg-amber-50 rounded-xl text-[#6e473b]">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">Membros Ativos</p>
+                        <h3 class="text-2xl font-bold text-slate-800" id="dashTotalAtivos">31</h3>
+                        <p class="text-xs text-slate-400">Total geral: <span id="dashTotalGeral">32</span></p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="p-3 bg-blue-50 rounded-xl text-blue-600">
+                        <i data-lucide="award" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">Eméritos / Falecidos</p>
+                        <h3 class="text-2xl font-bold text-slate-800"><span id="dashTotalEmeritos">1</span> / <span id="dashTotalFalecidos">0</span></h3>
+                        <p class="text-xs text-blue-500">Isentos de contribuição</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600">
+                        <i data-lucide="circle-dollar-sign" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">Arrecadação Mês</p>
+                        <h3 class="text-2xl font-bold text-emerald-600" id="dashTotalArrecadado">R$ 300,00</h3>
+                        <p class="text-xs text-slate-400" id="dashMesAnoLabel">Setembro / 2026</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="p-3 bg-purple-50 rounded-xl text-purple-600">
+                        <i data-lucide="percent" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">Adimplência</p>
+                        <h3 class="text-2xl font-bold text-purple-600" id="dashAdimplencia">48.4%</h3>
+                        <p class="text-xs text-slate-400"><span id="dashQtdPagos">15</span> pagos / <span id="dashQtdPendentes">16</span> pendentes</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Aniversariantes do Mês -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                            🎂 Aniversariantes do Mês
+                        </h3>
+                        <span class="text-xs font-semibold bg-pink-50 text-pink-700 px-2.5 py-1 rounded-full" id="countAniversariantes">0 no mês</span>
+                    </div>
+                    <div id="listaAniversariantes" class="space-y-3"></div>
+                </div>
+
+                <!-- Resumo por Etapa Vocacional -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+                        🕊️ Distribuição Vocacional
+                    </h3>
+                    <div class="space-y-3 text-sm" id="listaEtapas"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. MEMBROS -->
+        <section id="tab-membros" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex flex-1 w-full sm:w-auto gap-3">
+                    <div class="relative flex-1">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+                        <input type="text" id="searchMembroInput" oninput="renderMembrosTable()" placeholder="Buscar por nome, telefone, religioso, CPF..." class="w-full pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#6e473b] focus:outline-none">
+                    </div>
+                    <select id="filterStatusMembro" onchange="renderMembrosTable()" class="text-sm border border-slate-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#6e473b]">
+                        <option value="Todos">Todos os Status</option>
+                        <option value="Ativo">Ativos</option>
+                        <option value="Emérito">Eméritos</option>
+                        <option value="Afastado">Afastados</option>
+                        <option value="Transferido">Transferidos</option>
+                        <option value="Falecido(a)">Falecidos(as)</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    <button id="btnNovoMembro" onclick="openModalNovoMembro()" class="bg-[#6e473b] hover:bg-[#4a2f26] text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i> Novo Membro
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-600 text-xs uppercase font-semibold border-b border-slate-200">
+                            <tr>
+                                <th class="py-3.5 px-4">Nome Completo</th>
+                                <th class="py-3.5 px-4">Nome Religioso</th>
+                                <th class="py-3.5 px-4">Status</th>
+                                <th class="py-3.5 px-4">Telefone</th>
+                                <th class="py-3.5 px-4">Promessas Def.</th>
+                                <th class="py-3.5 px-4 text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membrosTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. MENSALIDADES -->
+        <section id="tab-mensalidades" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-bold text-slate-700">Ano:</label>
+                        <select id="selAnoMensalidade" onchange="renderMensalidadesGrid()" class="text-sm border border-slate-300 rounded-lg px-3 py-1.5 bg-white font-semibold">
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026" selected>2026</option>
+                            <option value="2027">2027</option>
+                        </select>
+                    </div>
+                    <button id="btnLoteMensalidade" onclick="openModalLote()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                        <i data-lucide="check-check" class="w-4 h-4"></i> Lançamento em Lote (Reunião)
+                    </button>
+                    <button id="btnZerarMes" onclick="handleZerarMes()" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition" title="Zera os pagamentos e valores do mês selecionado">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-amber-800"></i> Zerar Mês
+                    </button>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 text-xs">
+                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Pago</span>
+                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-red-500"></span> Pendente</span>
+                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-slate-300"></span> Isento</span>
+                    <span class="text-slate-400">(Clique no botão do mês para alterar status e valor)</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 text-xs">
+                            <tr>
+                                <th class="py-3 px-3 min-w-[220px]">Membro</th>
+                                <th class="py-3 px-1 text-center min-w-[75px]">Jan</th>
+                                <th class="py-3 px-1 text-center min-w-[75px]">Fev</th>
+                                <th class="py-3 px-1 text-center min-w-[75px]">Mar</th>
+                                <th class="py-3 px-1 text-center min-w-[75px]">Abr</th>
+                                <th class="py-3 px-1 text-center min-w-[75px]">Mai</th>
+                                <th class="py-3 px-1 text-center min-w-[75px]">Jun</th>
+                                <th class="py-3 px-1 text-center min-w-[75px]">Jul</th>
+                                <th class="py-3 px-1 text-center min-w-[75px]">Ago</th>
+                                <th class="py-3 px-1 text-center min-w-[75px]">Set</th>
+                                <th class="py-3 px-1 text-center min-w-[75px]">Out</th>
+                                <th class="py-3 px-1 text-center min-w-[75px]">Nov</th>
+                                <th class="py-3 px-1 text-center min-w-[75px]">Dez</th>
+                                <th class="py-3 px-3 text-right min-w-[95px] bg-slate-100 text-[#6e473b]">Total Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gridMensalidadesBody" class="divide-y divide-slate-100"></tbody>
+                        <tfoot id="gridMensalidadesFoot" class="bg-amber-50/80 border-t-2 border-[#6e473b] font-bold text-slate-800 text-xs"></tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3.5. LIVRO CAIXA (MOVIMENTAÇÃO FINANCEIRA) -->
+        <section id="tab-financeiro" class="tab-content hidden space-y-6">
+            <!-- Barra Superior com Filtros e Ações -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-bold text-slate-600 uppercase">Ano:</label>
+                        <select id="selAnoFinanceiro" onchange="renderFinanceiro()" class="text-xs border border-slate-300 rounded-lg px-3 py-1.5 bg-white font-semibold">
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026" selected>2026</option>
+                            <option value="2027">2027</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-bold text-slate-600 uppercase">Mês:</label>
+                        <select id="selMesFinanceiro" onchange="renderFinanceiro()" class="text-xs border border-slate-300 rounded-lg px-3 py-1.5 bg-white font-semibold">
+                            <option value="todos">Todos os Meses</option>
+                            <option value="1">Janeiro</option><option value="2">Fevereiro</option>
+                            <option value="3">Março</option><option value="4">Abril</option>
+                            <option value="5">Maio</option><option value="6">Junho</option>
+                            <option value="7">Julho</option><option value="8">Agosto</option>
+                            <option value="9" selected>Setembro</option><option value="10">Outubro</option>
+                            <option value="11">Novembro</option><option value="12">Dezembro</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-bold text-slate-600 uppercase">Tipo:</label>
+                        <select id="selTipoFinanceiro" onchange="renderFinanceiro()" class="text-xs border border-slate-300 rounded-lg px-3 py-1.5 bg-white">
+                            <option value="todos">Todos os Lançamentos</option>
+                            <option value="credito">Apenas Créditos (+ Entradas)</option>
+                            <option value="debito">Apenas Débitos (- Saídas)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
+                    <button onclick="exportarExcelLivroCaixa()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Exportar Excel (.xlsx)
+                    </button>
+                    <button id="btnZerarLivroCaixa" onclick="handleZerarLivroCaixa()" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition shadow-xs" title="Apaga todas as movimentações e zera o saldo anterior acumulado de R$ 2010.00">
+                        <i data-lucide="trash-2" class="w-4 h-4 text-amber-800"></i> Zerar Livro Caixa
+                    </button>
+                    <button id="btnNovaMovimentacao" onclick="abrirModalMovimentacao()" class="bg-[#6e473b] hover:bg-[#4a2f26] text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Nova Movimentação
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cards Resumo Financeiro do Período -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <p class="text-[11px] font-semibold text-slate-500 uppercase">Saldo Anterior (Inicial)</p>
+                    <h4 class="text-xl font-bold text-slate-700 mt-1" id="cardSaldoAnterior">R$ 0,00</h4>
+                    <span class="text-[10px] text-slate-400">Acumulado até o início do período</span>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-emerald-500">
+                    <p class="text-[11px] font-semibold text-emerald-700 uppercase">Total Entradas (Créditos)</p>
+                    <h4 class="text-xl font-bold text-emerald-600 mt-1" id="cardTotalEntradas">R$ 0,00</h4>
+                    <span class="text-[10px] text-emerald-600" id="cardQtdEntradas">0 lançamentos</span>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-red-500">
+                    <p class="text-[11px] font-semibold text-red-700 uppercase">Total Saídas (Débitos)</p>
+                    <h4 class="text-xl font-bold text-red-600 mt-1" id="cardTotalSaidas">R$ 0,00</h4>
+                    <span class="text-[10px] text-red-500" id="cardQtdSaidas">0 lançamentos</span>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-[#6e473b]">
+                    <p class="text-[11px] font-semibold text-[#6e473b] uppercase">Saldo Atual em Caixa</p>
+                    <h4 class="text-xl font-bold text-slate-900 mt-1" id="cardSaldoFinal">R$ 0,00</h4>
+                    <span class="text-[10px] font-bold" id="cardStatusResultado">Saldo Positivo</span>
+                </div>
+            </div>
+
+            <!-- Tabela do Livro Caixa -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <h4 class="font-bold text-xs uppercase text-slate-700 flex items-center gap-2">
+                        <i data-lucide="book-open" class="w-4 h-4 text-[#6e473b]"></i> Extrato de Movimentações — <span id="labelPeriodoExtrato">Setembro / 2026</span>
+                    </h4>
+                    <span class="text-[11px] text-slate-500" id="countLinhasExtrato">0 movimentações</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs" id="tabelaLivroCaixa">
+                        <thead class="bg-slate-50 text-slate-600 font-bold uppercase border-b border-slate-200 text-[11px]">
+                            <tr>
+                                <th class="py-3 px-3">Dia / Data</th>
+                                <th class="py-3 px-3">Descrição da Movimentação</th>
+                                <th class="py-3 px-3">Categoria</th>
+                                <th class="py-3 px-3">Forma</th>
+                                <th class="py-3 px-3 text-right text-emerald-700">Crédito (+)</th>
+                                <th class="py-3 px-3 text-right text-red-700">Débito (-)</th>
+                                <th class="py-3 px-3 text-right text-slate-800">Saldo Acumulado</th>
+                                <th class="py-3 px-3 text-center no-print">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="livroCaixaBody" class="divide-y divide-slate-100"></tbody>
+                        <tfoot id="livroCaixaFoot" class="bg-amber-50/80 border-t-2 border-[#6e473b] font-bold text-slate-800 text-xs"></tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. RELATÓRIOS -->
+        <section id="tab-relatorios" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
+                <button onclick="openRelatorioModal('ficha')" class="bg-white hover:border-[#6e473b] p-5 rounded-xl border border-slate-200 shadow-sm text-left transition group">
+                    <div class="w-10 h-10 bg-amber-50 text-[#6e473b] rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                        <i data-lucide="user-check" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm mb-1">1. Ficha Individual</h4>
+                    <p class="text-xs text-slate-500">Documento cadastral formatado pronto para impressão ou PDF.</p>
+                </button>
+
+                <button onclick="openRelatorioModal('extrato')" class="bg-white hover:border-[#6e473b] p-5 rounded-xl border border-slate-200 shadow-sm text-left transition group">
+                    <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                        <i data-lucide="credit-card" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm mb-1">2. Extrato com Valores</h4>
+                    <p class="text-xs text-slate-500">Histórico de pagamentos com campo de valor por membro.</p>
+                </button>
+
+                <button onclick="openRelatorioModal('geral')" class="bg-white hover:border-[#6e473b] p-5 rounded-xl border border-slate-200 shadow-sm text-left transition group">
+                    <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                        <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm mb-1">3. Relatório Completo</h4>
+                    <p class="text-xs text-slate-500">Relação completa de todos os membros e exportação Excel (.xlsx).</p>
+                </button>
+
+                <button onclick="openRelatorioModal('mensal')" class="bg-white hover:border-[#6e473b] p-5 rounded-xl border border-slate-200 shadow-sm text-left transition group">
+                    <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                        <i data-lucide="calendar-check-2" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm mb-1">4. Balancete do Mês</h4>
+                    <p class="text-xs text-slate-500">Prestação de contas mensal com quem pagou, valores e pendências.</p>
+                </button>
+            </div>
+
+            <!-- SEÇÃO DE FECHAMENTO CONTÁBIL & FINANCEIRO -->
+            <div class="no-print pt-2">
+                <h4 class="text-xs font-bold text-[#6e473b] uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <i data-lucide="calculator" class="w-4 h-4"></i> Relatórios de Fechamento Financeiro & Contábil
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button onclick="openRelatorioModal('fechamento_mes')" class="bg-white hover:border-emerald-600 p-5 rounded-xl border border-slate-200 shadow-sm text-left transition group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-base">📑</span>
+                            <span class="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-0.5 rounded-full">Mensal</span>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">Fechamento do Mês (Balancete Contábil)</h5>
+                        <p class="text-xs text-slate-500 mt-1">Balancete completo com saldo anterior, créditos, débitos, saldo final do mês e campo para assinaturas.</p>
+                    </button>
+
+                    <button onclick="openRelatorioModal('fechamento_ano')" class="bg-white hover:border-blue-600 p-5 rounded-xl border border-slate-200 shadow-sm text-left transition group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-9 h-9 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center font-bold text-base">📅</span>
+                            <span class="text-xs font-bold bg-blue-100 text-blue-900 px-2.5 py-0.5 rounded-full">Anual</span>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">Fechamento Anual (Demonstrativo do Exercício)</h5>
+                        <p class="text-xs text-slate-500 mt-1">Evolução mês a mês (Jan a Dez) de entradas, saídas, resultado mensal e saldo final acumulado do ano.</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SEÇÃO DE RELATÓRIOS POR ETAPA VOCACIONAL -->
+            <div class="no-print pt-2">
+                <h4 class="text-xs font-bold text-[#6e473b] uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <i data-lucide="award" class="w-4 h-4"></i> Relatórios por Etapa Vocacional & Formativa
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <button onclick="openRelatorioModal('definitivas')" class="bg-white hover:border-amber-600 p-4 rounded-xl border border-slate-200 shadow-sm text-left transition group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xs">🏅</span>
+                            <span class="text-xs font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full" id="countRelDef">15</span>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">Promessas Definitivas</h5>
+                        <p class="text-[11px] text-slate-500 mt-1">Membros com promessas perpétuas emitidas e celebrante.</p>
+                    </button>
+
+                    <button onclick="openRelatorioModal('temporarias')" class="bg-white hover:border-blue-600 p-4 rounded-xl border border-slate-200 shadow-sm text-left transition group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center font-bold text-xs">⏳</span>
+                            <span class="text-xs font-bold bg-blue-100 text-blue-900 px-2 py-0.5 rounded-full" id="countRelTemp">3</span>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">Promessas Temporárias</h5>
+                        <p class="text-[11px] text-slate-500 mt-1">Membros em período de promessas temporárias vigentes.</p>
+                    </button>
+
+                    <button onclick="openRelatorioModal('admissao')" class="bg-white hover:border-emerald-600 p-4 rounded-xl border border-slate-200 shadow-sm text-left transition group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-xs">📖</span>
+                            <span class="text-xs font-bold bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded-full" id="countRelAdm">3</span>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">Admissão à Formação</h5>
+                        <p class="text-[11px] text-slate-500 mt-1">Membros admitidos formalmente à formação OCDS.</p>
+                    </button>
+
+                    <button onclick="openRelatorioModal('iniciantes')" class="bg-white hover:border-purple-600 p-4 rounded-xl border border-slate-200 shadow-sm text-left transition group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-xs">🌱</span>
+                            <span class="text-xs font-bold bg-purple-100 text-purple-900 px-2 py-0.5 rounded-full" id="countRelInic">11</span>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">Iniciantes (Sem Admissão)</h5>
+                        <p class="text-[11px] text-slate-500 mt-1">Membros recém-chegados em discernimento inicial.</p>
+                    </button>
+                </div>
+            </div>
+
+            <div id="relatorioContainer" class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                <p class="text-sm text-slate-500 text-center py-8">Selecione um dos relatórios acima para visualizar, imprimir ou baixar em Excel.</p>
+            </div>
+        </section>
+
+        <!-- 5. SENHAS & USUÁRIOS -->
+        <section id="tab-usuarios" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Troca de Senha -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                    <h3 class="font-bold text-slate-800 text-base mb-3 flex items-center gap-2">
+                        <i data-lucide="key" class="w-5 h-5 text-[#6e473b]"></i> Alterar Minha Senha
+                    </h3>
+                    <form onsubmit="handleTrocaSenha(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Senha Atual</label>
+                            <input type="password" id="senhaAtual" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#6e473b] focus:outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nova Senha (mínimo 6 caracteres)</label>
+                            <input type="password" id="novaSenha" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#6e473b] focus:outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Confirmar Nova Senha</label>
+                            <input type="password" id="confirmaSenha" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#6e473b] focus:outline-none" required>
+                        </div>
+                        <button type="submit" class="bg-[#6e473b] hover:bg-[#4a2f26] text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                            Atualizar Minha Senha
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Cadastro de Novo Usuário: agora feito no painel do Supabase, por segurança -->
+                <div id="boxNovoUsuario" class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                    <h3 class="font-bold text-slate-800 text-base mb-1 flex items-center gap-2">
+                        <i data-lucide="user-plus" class="w-5 h-5 text-[#6e473b]"></i> Novo Acesso
+                    </h3>
+                    <p class="text-xs text-slate-500">
+                        Por segurança, novos acessos e remoções são feitos direto no painel do Supabase
+                        (Authentication &gt; Users), e depois vinculados a um nome/nível na tabela
+                        <code class="bg-slate-100 px-1 rounded">perfis</code>. Fale com quem administra o Supabase da comunidade.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Lista de Usuários e Sincronização -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="font-bold text-slate-800 text-sm uppercase">Usuários Ativos no Banco de Dados da Nuvem</h4>
+                    <button onclick="sincronizarComNuvem(true)" class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100 px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 transition">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Sincronizar com Nuvem Agora
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 text-slate-600 font-semibold border-b">
+                            <tr>
+                                <th class="p-2.5">Nome</th>
+                                <th class="p-2.5">E-mail</th>
+                                <th class="p-2.5">Nível de Acesso</th>
+                                <th class="p-2.5 text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaUsuariosBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL MEMBRO (CRIAR / EDITAR) -->
+    <div id="modalMembroForm" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col border-t-8 border-[#6e473b]">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="font-bold text-lg text-slate-800" id="modalMembroTitle">Cadastrar Membro</h3>
+                <button onclick="closeModal('modalMembroForm')" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <form id="formMembro" onsubmit="handleSalvarMembro(event)" class="p-6 overflow-y-auto space-y-4 text-xs">
+                <input type="hidden" id="editMembroId" value="">
+                
+                <div class="border-b pb-3">
+                    <h5 class="font-bold text-[#6e473b] uppercase mb-2">1. Identificação & Dados Pessoais</h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold mb-1">Nome Completo *</label>
+                            <input type="text" id="f_nome" class="w-full p-2 border rounded-lg" required>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Nome Religioso</label>
+                            <input type="text" id="f_religioso" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Data de Nascimento (AAAA-MM-DD)</label>
+                            <input type="text" id="f_nasc" class="w-full p-2 border rounded-lg" placeholder="AAAA-MM-DD">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Status na Comunidade</label>
+                            <select id="f_status" class="w-full p-2 border rounded-lg bg-white font-semibold">
+                                <option value="Ativo">Ativo</option>
+                                <option value="Emérito">Emérito (Isento)</option>
+                                <option value="Afastado">Afastado</option>
+                                <option value="Transferido">Transferido</option>
+                                <option value="Falecido(a)">Falecido(a)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">RG</label>
+                            <input type="text" id="f_rg" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">CPF</label>
+                            <input type="text" id="f_cpf" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Estado Civil</label>
+                            <input type="text" id="f_estcivil" class="w-full p-2 border rounded-lg" placeholder="Casado(a), Solteiro(a)...">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Cônjuge</label>
+                            <input type="text" id="f_conjuge" class="w-full p-2 border rounded-lg">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-b pb-3">
+                    <h5 class="font-bold text-[#6e473b] uppercase mb-2">2. Contato & Endereço</h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="sm:col-span-2">
+                            <label class="block font-semibold mb-1">Endereço Residencial</label>
+                            <input type="text" id="f_endereco" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Bairro</label>
+                            <input type="text" id="f_bairro" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Cidade / UF</label>
+                            <input type="text" id="f_cidade" value="Itapetininga-SP" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Telefone / WhatsApp</label>
+                            <input type="text" id="f_tel" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">E-mail</label>
+                            <input type="email" id="f_email" class="w-full p-2 border rounded-lg">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-b pb-3">
+                    <h5 class="font-bold text-[#6e473b] uppercase mb-2">3. Datas Vocacionais OCDS</h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold mb-1">Data Entrada OCDS</label>
+                            <input type="text" id="f_entrada" class="w-full p-2 border rounded-lg" placeholder="AAAA-MM-DD">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Data Sanatio</label>
+                            <input type="text" id="f_sanatio" class="w-full p-2 border rounded-lg" placeholder="AAAA-MM-DD">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Data Admissão</label>
+                            <input type="text" id="f_admissao" class="w-full p-2 border rounded-lg" placeholder="AAAA-MM-DD">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Frei/Padre Admissão</label>
+                            <input type="text" id="f_frei_adm" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Data Promessas Temporárias</label>
+                            <input type="text" id="f_prom_temp" class="w-full p-2 border rounded-lg" placeholder="AAAA-MM-DD">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Frei/Padre Promessas Temp.</label>
+                            <input type="text" id="f_frei_temp" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Data Promessas Definitivas</label>
+                            <input type="text" id="f_prom_def" class="w-full p-2 border rounded-lg" placeholder="AAAA-MM-DD">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Frei/Padre Promessas Def.</label>
+                            <input type="text" id="f_frei_def" class="w-full p-2 border rounded-lg">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Observações Gerais</label>
+                    <textarea id="f_obs" rows="2" class="w-full p-2 border rounded-lg"></textarea>
+                </div>
+
+                <div class="pt-3 border-t flex justify-between items-center">
+                    <button type="button" id="btnExcluirMembro" onclick="excluirMembroAtual()" class="text-red-600 hover:text-red-800 font-semibold hidden">
+                        Excluir Membro
+                    </button>
+                    <div class="flex gap-2 ml-auto">
+                        <button type="button" onclick="closeModal('modalMembroForm')" class="px-4 py-2 border rounded-lg hover:bg-slate-100">Cancelar</button>
+                        <button type="submit" class="px-5 py-2 bg-[#6e473b] hover:bg-[#4a2f26] text-white font-semibold rounded-lg shadow-sm">Salvar Dados</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR MENSALIDADE INDIVIDUAL -->
+    <div id="modalMensalidade" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border-t-8 border-[#6e473b]">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-base text-slate-800">Lançamento de Mensalidade</h3>
+                <button onclick="closeModal('modalMensalidade')" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form onsubmit="handleSalvarMensalidade(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="m_membroNome">
+                <input type="hidden" id="m_ano">
+                <input type="hidden" id="m_mes">
+                
+                <div>
+                    <span class="text-slate-500 block">Membro:</span>
+                    <strong class="text-sm text-slate-800 block" id="m_labelMembro"></strong>
+                    <span class="text-slate-500 text-[11px]" id="m_labelReferencia"></span>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Valor da Mensalidade (R$)</label>
+                    <input type="number" step="0.01" min="0" id="m_valor" class="w-full p-2 border rounded-lg text-sm font-bold text-slate-800" value="0.00" placeholder="00.00" required>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Situação / Status</label>
+                    <select id="m_status" class="w-full p-2 border rounded-lg bg-white font-semibold">
+                        <option value="Pago">🟢 Pago (Quitado)</option>
+                        <option value="Pendente">🔴 Pendente (Não pago)</option>
+                        <option value="Isento">⚪ Isento (Emérito/Livre)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Forma de Pagamento</label>
+                    <select id="m_forma" class="w-full p-2 border rounded-lg bg-white">
+                        <option value="PIX">PIX</option>
+                        <option value="Dinheiro">Dinheiro em Espécie</option>
+                        <option value="Transferência Bancária">Transferência Bancária</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Observação</label>
+                    <input type="text" id="m_obs" class="w-full p-2 border rounded-lg" value="Mensalidade OCDS">
+                </div>
+
+                <div class="pt-3 border-t flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('modalMensalidade')" class="px-4 py-2 border rounded-lg hover:bg-slate-100">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 bg-[#6e473b] hover:bg-[#4a2f26] text-white font-semibold rounded-lg shadow-sm">Salvar Pagamento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL LANÇAMENTO EM LOTE -->
+    <div id="modalLote" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col border-t-8 border-emerald-600">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-base text-slate-800">Lançamento em Lote (Reunião Mensal)</h3>
+                    <p class="text-xs text-slate-500">Marque os membros presentes que efetuaram a contribuição:</p>
+                </div>
+                <button onclick="closeModal('modalLote')" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <form onsubmit="handleSalvarLote(event)" class="p-5 overflow-y-auto space-y-4 text-xs">
+                <div class="grid grid-cols-3 gap-3 bg-slate-50 p-3 rounded-lg">
+                    <div>
+                        <label class="block font-semibold mb-1">Mês de Referência</label>
+                        <select id="lote_mes" class="w-full p-2 border rounded bg-white">
+                            <option value="1">01 - Janeiro</option><option value="2">02 - Fevereiro</option>
+                            <option value="3">03 - Março</option><option value="4">04 - Abril</option>
+                            <option value="5">05 - Maio</option><option value="6">06 - Junho</option>
+                            <option value="7">07 - Julho</option><option value="8">08 - Agosto</option>
+                            <option value="9" selected>09 - Setembro</option><option value="10">10 - Outubro</option>
+                            <option value="11">11 - Novembro</option><option value="12">12 - Dezembro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Valor por Membro (R$)</label>
+                        <input type="number" id="lote_valor" class="w-full p-2 border rounded font-bold text-slate-800" value="0.00" step="0.50" placeholder="00.00">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Forma Predominante</label>
+                        <select id="lote_forma" class="w-full p-2 border rounded bg-white">
+                            <option value="Dinheiro">Dinheiro</option>
+                            <option value="PIX">PIX</option>
+                            <option value="Transferência">Transferência</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="font-bold uppercase text-slate-700">Selecione os Membros Pagantes:</label>
+                        <button type="button" onclick="toggleSelectAllLote()" class="text-emerald-700 hover:underline font-semibold">Marcar / Desmarcar Todos</button>
+                    </div>
+                    <div id="listaLoteMembros" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-60 overflow-y-auto p-2 border rounded-lg"></div>
+                </div>
+
+                <div class="pt-3 border-t flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('modalLote')" class="px-4 py-2 border rounded-lg hover:bg-slate-100">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-sm">Confirmar Pagamentos em Lote</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC INTEGRADA COM SUPABASE -->
+    <script>
+        // CONFIGURAÇÃO REAL DO SUPABASE
+        const SUPABASE_URL = "https://lbzixpzqsmautkchricc.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_bhEUBkb78-nOrCwpE0TxSQ_kYnP0zug";
+        let sb = null;
+        if (window.supabase) {
+            sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
+
+        const INITIAL_MOVIMENTACOES = [];
+        let MOVIMENTACOES_CACHE = [];
+        
+        const INITIAL_MEMBERS = []; // Dados reais removidos do código-fonte por segurança - vêm só do Supabase, após login
+        let MEMBROS_CACHE = [];
+        let MENSALIDADES_CACHE = {};
+        let USUARIOS_CACHE = [];
+
+        // SINCRONIZAÇÃO COMPLETA COM A NUVEM
+        async function sincronizarComNuvem(notificar = false) {
+            if (!sb) return;
+            try {
+                // 0. Movimentações Financeiras (Livro Caixa)
+                try {
+                    const { data: movData, error: movErr } = await sb.from('movimentacoes').select('*').order('data', { ascending: true });
+                    if (!movErr && movData) {
+                        // Purga automaticamente os dados de teste da nuvem
+                        const temTesteNuvem = movData.some(m => DESCRICOES_TESTE_LIVRO_CAIXA.includes(m.descricao));
+                        if (temTesteNuvem) {
+                            console.log('Expurgando dados de teste do Supabase...');
+                            for (const d of DESCRICOES_TESTE_LIVRO_CAIXA) {
+                                await sb.from('movimentacoes').delete().eq('descricao', d);
+                            }
+                            const { data: limposData } = await sb.from('movimentacoes').select('*').order('data', { ascending: true });
+                            MOVIMENTACOES_CACHE = limposData || [];
+                        } else {
+                            MOVIMENTACOES_CACHE = movData;
+                        }
+                        try { localStorage.setItem('ocds_movimentacoes', JSON.stringify(MOVIMENTACOES_CACHE)); } catch(e) {}
+                    }
+                } catch (e) {
+                    console.warn('Tabela movimentacoes ainda não criada no Supabase, usando cache local.');
+                }
+
+                // 1. Membros
+                const { data: mData, error: mErr } = await sb.from('membros').select('*').order('nome', { ascending: true });
+                if (!mErr && mData && mData.length > 0) {
+                    MEMBROS_CACHE = mData;
+                } else if (mData && mData.length === 0) {
+                    // Se tabela estiver vazia na nuvem, faz seed inicial
+                    await sb.from('membros').insert(INITIAL_MEMBERS);
+                    const { data: seeded } = await sb.from('membros').select('*').order('nome', { ascending: true });
+                    if (seeded) MEMBROS_CACHE = seeded;
+                }
+
+                // 2. Mensalidades
+                const { data: menData, error: menErr } = await sb.from('mensalidades').select('*');
+                if (!menErr && menData) {
+                    MENSALIDADES_CACHE = {};
+                    menData.forEach(r => {
+                        if (!MENSALIDADES_CACHE[r.membro_nome]) MENSALIDADES_CACHE[r.membro_nome] = {};
+                        if (!MENSALIDADES_CACHE[r.membro_nome][r.ano]) MENSALIDADES_CACHE[r.membro_nome][r.ano] = {};
+                        MENSALIDADES_CACHE[r.membro_nome][r.ano][r.mes] = {
+                            status: r.status,
+                            valor: (r.valor !== undefined && r.valor !== null) ? Number(r.valor) : 0.00,
+                            forma: r.forma_pagamento || 'PIX',
+                            data: r.data_pagamento,
+                            observacao: r.observacao
+                        };
+                    });
+                    try { localStorage.setItem('ocds_mensalidades_v2', JSON.stringify(MENSALIDADES_CACHE)); } catch(e) {}
+                }
+
+                // 3. Perfis (nomes e níveis de acesso dos usuários autenticados via Supabase Auth)
+                const { data: pData, error: pErr } = await sb.from('perfis').select('*');
+                if (!pErr && pData) {
+                    USUARIOS_CACHE = pData.map(x => ({
+                        id: x.id,
+                        nome: x.nome,
+                        perfil: x.perfil,
+                        email: x.email
+                    }));
+                }
+
+                updateDashboard();
+                renderMembrosTable();
+                renderMensalidadesGrid();
+                renderUsuariosTable();
+                if (notificar) alert('Dados sincronizados com a nuvem com sucesso!');
+            } catch (err) {
+                console.error('Erro na sincronizacao Supabase:', err);
+            }
+        }
+
+                // Lista das descrições dos 15 lançamentos fictícios de teste que somavam R$ 2010.00
+        const DESCRICOES_TESTE_LIVRO_CAIXA = [
+            'Compra de velas e incenso para oração comunitária',
+            'Repasse da taxa semestral - Regional São João da Cruz',
+            'Aquisição de subsídios de formação OCDS',
+            'Flores e ornamentação para Solenidade Comunitária',
+            'Confraternização do dia de Nossa Senhora do Carmo',
+            'Café comunitário e materiais para o encontro',
+            'Mensalidades da Comunidade - Janeiro/2026',
+            'Mensalidades da Comunidade - Fevereiro/2026',
+            'Mensalidades da Comunidade - Março/2026',
+            'Mensalidades da Comunidade - Abril/2026',
+            'Mensalidades da Comunidade - Maio/2026',
+            'Mensalidades da Comunidade - Junho/2026',
+            'Mensalidades da Comunidade - Julho/2026',
+            'Mensalidades da Comunidade - Agosto/2026',
+            'Mensalidades da Comunidade - Setembro/2026 (parcial)'
+        ];
+
+        function getMovimentacoes() {
+            let res = [];
+            if (MOVIMENTACOES_CACHE && MOVIMENTACOES_CACHE.length > 0) {
+                res = MOVIMENTACOES_CACHE;
+            } else {
+                const cur = localStorage.getItem('ocds_movimentacoes');
+                if (cur !== null) {
+                    try { res = JSON.parse(cur); } catch(e) {}
+                }
+            }
+
+            // Filtra e elimina na hora qualquer dado de teste residual que cause o saldo acumulado de R$ 2010.00
+            const limpo = res.filter(m => !DESCRICOES_TESTE_LIVRO_CAIXA.includes(m.descricao) && m.observacoes !== 'Nota fiscal arquivada' && m.observacao !== 'Nota fiscal arquivada');
+            if (limpo.length !== res.length) {
+                MOVIMENTACOES_CACHE = limpo;
+                try { localStorage.setItem('ocds_movimentacoes', JSON.stringify(limpo)); } catch(e) {}
+            }
+            return limpo;
+        }
+
+        function setMovimentacoes(data) {
+            MOVIMENTACOES_CACHE = data;
+            localStorage.setItem('ocds_movimentacoes', JSON.stringify(data));
+        }
+
+        function getMembros() {
+            return MEMBROS_CACHE.length > 0 ? MEMBROS_CACHE : INITIAL_MEMBERS;
+        }
+
+        function getMensalidades() {
+            if (Object.keys(MENSALIDADES_CACHE).length > 0) return MENSALIDADES_CACHE;
+            const cur = localStorage.getItem('ocds_mensalidades_v2');
+            if (cur) {
+                try {
+                    MENSALIDADES_CACHE = JSON.parse(cur);
+                    return MENSALIDADES_CACHE;
+                } catch(e) {}
+            }
+            return MENSALIDADES_CACHE;
+        }
+
+        function setMensalidades(data) {
+            MENSALIDADES_CACHE = data;
+            try {
+                localStorage.setItem('ocds_mensalidades_v2', JSON.stringify(data));
+            } catch(e) {}
+        }
+
+        function getUsuarios() {
+            return USUARIOS_CACHE;
+        }
+
+        function getUsuarioLogado() {
+            const s = sessionStorage.getItem('ocds_logged_user');
+            if (s) return JSON.parse(s);
+            return null;
+        }
+
+        // Busca nome/perfil do usuário autenticado na tabela perfis (nunca expõe senha)
+        async function carregarPerfilLogado() {
+            if (!sb) return null;
+            const { data: { user } } = await sb.auth.getUser();
+            if (!user) return null;
+            const { data, error } = await sb.from('perfis').select('*').eq('id', user.id).maybeSingle();
+            if (error || !data) return null;
+            return { id: data.id, nome: data.nome, perfil: data.perfil, email: user.email };
+        }
+
+        // LOGIN VIA SUPABASE AUTH (e-mail + senha reais, nunca em texto puro no código)
+        async function handleLogin(e) {
+            if (e) e.preventDefault();
+            const email = (document.getElementById('loginUser').value || '').trim();
+            const p = (document.getElementById('loginPass').value || '').trim();
+
+            if (!sb) {
+                document.getElementById('loginError').classList.remove('hidden');
+                return;
+            }
+
+            const { data: authData, error: authErr } = await sb.auth.signInWithPassword({ email, password: p });
+            const perfilRow = (!authErr && authData.session) ? await carregarPerfilLogado() : null;
+
+            if (perfilRow) {
+                sessionStorage.setItem('ocds_logged_user', JSON.stringify(perfilRow));
+                const lm = document.getElementById('loginModal');
+                if (lm) {
+                    lm.style.display = 'none';
+                    lm.classList.add('hidden');
+                    lm.classList.remove('flex');
+                }
+                document.getElementById('loginError').classList.add('hidden');
+                aplicarPermissoes(perfilRow);
+                await sincronizarComNuvem();
+            } else {
+                await sb.auth.signOut();
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        }
+
+        async function handleLogout() {
+            sessionStorage.removeItem('ocds_logged_user');
+            if (sb) await sb.auth.signOut();
+            const lm = document.getElementById('loginModal');
+            if (lm) {
+                lm.style.display = 'flex';
+                lm.classList.remove('hidden');
+                lm.classList.add('flex');
+            }
+        }
+
+        function aplicarPermissoes(user) {
+            if (!user) return;
+            document.getElementById('headerUserName').innerText = user.nome;
+            const nivelMap = {
+                admin: 'Administrador (Total)',
+                editor: 'Edição (Cadastros & Mensalidades)',
+                visualizador: 'Visualização Somente'
+            };
+            document.getElementById('headerUserLevel').innerText = nivelMap[user.perfil] || 'Visualizador';
+            
+            const podeEditar = (user.perfil === 'admin' || user.perfil === 'editor');
+            const btnNovo = document.getElementById('btnNovoMembro');
+            if (btnNovo) btnNovo.style.display = podeEditar ? 'inline-flex' : 'none';
+            const btnLote = document.getElementById('btnLoteMensalidade');
+            if (btnLote) btnLote.style.display = podeEditar ? 'inline-flex' : 'none';
+            const boxUser = document.getElementById('boxNovoUsuario');
+            if (boxUser) boxUser.style.display = (user.perfil === 'admin') ? 'block' : 'none';
+        }
+
+        // Restaura a sessão real do Supabase Auth ao recarregar a página (não confia só no sessionStorage)
+        async function restaurarSessao() {
+            if (!sb) return;
+            const { data: { session } } = await sb.auth.getSession();
+            if (session) {
+                const perfilRow = await carregarPerfilLogado();
+                if (perfilRow) {
+                    sessionStorage.setItem('ocds_logged_user', JSON.stringify(perfilRow));
+                    const lm = document.getElementById('loginModal');
+                    if (lm) {
+                        lm.style.display = 'none';
+                        lm.classList.add('hidden');
+                        lm.classList.remove('flex');
+                    }
+                    aplicarPermissoes(perfilRow);
+                    await sincronizarComNuvem();
+                    return;
+                }
+                await sb.auth.signOut();
+            }
+            sessionStorage.removeItem('ocds_logged_user');
+        }
+        restaurarSessao();
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-[#6e473b]', 'bg-amber-50', 'font-semibold');
+                btn.classList.add('text-slate-600', 'font-medium');
+            });
+
+            const targetTab = document.getElementById('tab-' + tabId);
+            const targetBtn = document.getElementById('tabBtn-' + tabId);
+            if (targetTab) targetTab.classList.remove('hidden');
+            if (targetBtn) {
+                targetBtn.classList.add('text-[#6e473b]', 'bg-amber-50', 'font-semibold');
+                targetBtn.classList.remove('text-slate-600', 'font-medium');
+            }
+
+            if (tabId === 'dashboard') updateDashboard();
+            if (tabId === 'membros') renderMembrosTable();
+            if (tabId === 'mensalidades') renderMensalidadesGrid();
+            if (tabId === 'financeiro') renderFinanceiro();
+            if (tabId === 'usuarios') renderUsuariosTable();
+            lucide.createIcons();
+        }
+
+        // DASHBOARD
+        function updateDashboard() {
+            const membros = getMembros();
+            const mensalidades = getMensalidades();
+            
+            const ativos = membros.filter(m => m.status === 'Ativo').length;
+            const emeritos = membros.filter(m => m.status === 'Emérito').length;
+            const falecidos = membros.filter(m => m.status === 'Falecido(a)').length;
+            
+            document.getElementById('dashTotalAtivos').innerText = ativos;
+            document.getElementById('dashTotalEmeritos').innerText = emeritos;
+            document.getElementById('dashTotalFalecidos').innerText = falecidos;
+            document.getElementById('dashTotalGeral').innerText = membros.length;
+            document.getElementById('countMembrosBadge').innerText = membros.length;
+
+            let pagos = 0, pends = 0, arrecadado = 0.00;
+            membros.forEach(m => {
+                if (m.status === 'Ativo') {
+                    const reg = mensalidades[m.nome]?.[2026]?.[9];
+                    const st = reg ? (typeof reg === 'object' ? reg.status : reg) : 'Pendente';
+                    
+                    // CORREÇÃO: Valor numérico real - se for 0.00, soma 0.00 (NUNCA mais força 20!)
+                    let val = 0.00;
+                    if (reg && typeof reg === 'object' && reg.valor !== undefined && reg.valor !== null) {
+                        val = parseFloat(reg.valor) || 0.00;
+                    }
+
+                    if (st === 'Pago') {
+                        pagos++;
+                        arrecadado += val;
+                    } else {
+                        // Qualquer status não-pago conta como pendente
+                        pends++;
+                    }
+                }
+            });
+
+            document.getElementById('dashTotalArrecadado').innerText = `R$ ${arrecadado.toFixed(2)}`;
+            document.getElementById('dashQtdPagos').innerText = pagos;
+            document.getElementById('dashQtdPendentes').innerText = pends;
+            const taxa = (pagos + pends > 0) ? ((pagos / (pagos + pends)) * 100).toFixed(1) : 0;
+            document.getElementById('dashAdimplencia').innerText = `${taxa}%`;
+
+            // Aniversariantes de Setembro
+            const listaAniv = document.getElementById('listaAniversariantes');
+            listaAniv.innerHTML = '';
+            const mesSet = membros.filter(m => {
+                const dn = m.data_nascimento || '';
+                return dn.includes('-09-') || dn.includes('/09/') || dn.includes('.09.') || dn.includes('-9-');
+            });
+
+            document.getElementById('countAniversariantes').innerText = `${mesSet.length} no mês`;
+            if (mesSet.length === 0) {
+                listaAniv.innerHTML = '<p class="text-xs text-slate-400">Nenhum aniversariante neste mês.</p>';
+            } else {
+                mesSet.forEach(m => {
+                    listaAniv.innerHTML += `
+                        <div class="flex items-center justify-between p-3 bg-amber-50/50 rounded-lg border border-amber-100">
+                            <div>
+                                <p class="font-semibold text-slate-800 text-sm">${m.nome}</p>
+                                <p class="text-xs text-[#6e473b] italic">${m.nome_religioso || '—'}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-bold text-amber-900 bg-amber-200/60 px-2 py-0.5 rounded">${m.data_nascimento}</span>
+                                <p class="text-xs text-slate-400 mt-0.5">${m.telefone || ''}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // Etapas
+            const elEtapas = document.getElementById('listaEtapas');
+            const defs = membros.filter(m => m.data_promessas_definitivas && m.data_promessas_definitivas.trim() !== '').length;
+            const temps = membros.filter(m => m.data_promessas_temporarias && m.data_promessas_temporarias.trim() !== '' && (!m.data_promessas_definitivas || m.data_promessas_definitivas.trim() === '')).length;
+            const adm = membros.filter(m => m.data_admissao && m.data_admissao.trim() !== '' && (!m.data_promessas_temporarias || m.data_promessas_temporarias.trim() === '')).length;
+            const iniciantesCount = membros.filter(m => (!m.data_admissao || m.data_admissao.trim() === '') && (!m.data_promessas_temporarias || m.data_promessas_temporarias.trim() === '') && (!m.data_promessas_definitivas || m.data_promessas_definitivas.trim() === '')).length;
+
+            const elCDef = document.getElementById('countRelDef');
+            if (elCDef) elCDef.innerText = defs;
+            const elCTemp = document.getElementById('countRelTemp');
+            if (elCTemp) elCTemp.innerText = temps;
+            const elCAdm = document.getElementById('countRelAdm');
+            if (elCAdm) elCAdm.innerText = adm;
+            const elCInic = document.getElementById('countRelInic');
+            if (elCInic) elCInic.innerText = iniciantesCount;
+
+            elEtapas.innerHTML = `
+                <div onclick="switchTab('relatorios'); openRelatorioModal('definitivas');" class="flex justify-between p-2.5 bg-slate-50 hover:bg-amber-50 rounded-lg cursor-pointer transition">
+                    <span class="font-medium text-slate-700 flex items-center gap-1.5">🏅 Promessas Definitivas</span>
+                    <span class="font-bold text-[#6e473b]">${defs} membros →</span>
+                </div>
+                <div onclick="switchTab('relatorios'); openRelatorioModal('temporarias');" class="flex justify-between p-2.5 bg-slate-50 hover:bg-blue-50 rounded-lg cursor-pointer transition">
+                    <span class="font-medium text-slate-700 flex items-center gap-1.5">⏳ Promessas Temporárias</span>
+                    <span class="font-bold text-[#6e473b]">${temps} membros →</span>
+                </div>
+                <div onclick="switchTab('relatorios'); openRelatorioModal('admissao');" class="flex justify-between p-2.5 bg-slate-50 hover:bg-emerald-50 rounded-lg cursor-pointer transition">
+                    <span class="font-medium text-slate-700 flex items-center gap-1.5">📖 Em Formação / Admissão</span>
+                    <span class="font-bold text-[#6e473b]">${adm} membros →</span>
+                </div>
+                <div onclick="switchTab('relatorios'); openRelatorioModal('iniciantes');" class="flex justify-between p-2.5 bg-slate-50 hover:bg-purple-50 rounded-lg cursor-pointer transition">
+                    <span class="font-medium text-slate-700 flex items-center gap-1.5">🌱 Iniciantes (Sem Admissão)</span>
+                    <span class="font-bold text-[#6e473b]">${iniciantesCount} membros →</span>
+                </div>
+            `;
+        }
+
+        
+        // ==========================================
+        // 💵 LIVRO CAIXA & MOVIMENTAÇÃO FINANCEIRA
+        // ==========================================
+        function renderFinanceiro() {
+            const movs = getMovimentacoes();
+            const anoSel = parseInt(document.getElementById('selAnoFinanceiro').value);
+            const mesSel = document.getElementById('selMesFinanceiro').value;
+            const tipoSel = document.getElementById('selTipoFinanceiro').value;
+
+            const mesesNomes = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            const labelMes = mesSel === 'todos' ? 'Ano Completo' : mesesNomes[parseInt(mesSel)];
+            document.getElementById('labelPeriodoExtrato').innerText = `${labelMes} / ${anoSel}`;
+
+            // Ordena todas por data ascendente para cálculo de saldo cumulativo
+            const todasOrdenadas = [...movs].sort((a, b) => new Date(a.data) - new Date(b.data));
+
+            // Define data de início do filtro
+            let dataInicioFiltro = `${anoSel}-01-01`;
+            let dataFimFiltro = `${anoSel}-12-31`;
+            if (mesSel !== 'todos') {
+                const mesNum = parseInt(mesSel);
+                dataInicioFiltro = `${anoSel}-${String(mesNum).padStart(2, '0')}-01`;
+                // Último dia do mês
+                const ultimoDia = new Date(anoSel, mesNum, 0).getDate();
+                dataFimFiltro = `${anoSel}-${String(mesNum).padStart(2, '0')}-${String(ultimoDia).padStart(2, '0')}`;
+            }
+
+            // 1. Calcula Saldo Anterior (tudo anterior a dataInicioFiltro)
+            let saldoAnterior = 0;
+            todasOrdenadas.forEach(m => {
+                if (m.data < dataInicioFiltro) {
+                    saldoAnterior += (Number(m.credito) || 0) - (Number(m.debito) || 0);
+                }
+            });
+
+            // 2. Filtra movimentações do período selecionado
+            let periodoFiltrado = todasOrdenadas.filter(m => m.data >= dataInicioFiltro && m.data <= dataFimFiltro);
+
+            // Filtro por tipo (credito / debito)
+            if (tipoSel === 'credito') {
+                periodoFiltrado = periodoFiltrado.filter(m => (Number(m.credito) || 0) > 0);
+            } else if (tipoSel === 'debito') {
+                periodoFiltrado = periodoFiltrado.filter(m => (Number(m.debito) || 0) > 0);
+            }
+
+            // 3. Totalizadores do Período
+            let totalCreditos = 0;
+            let totalDebitos = 0;
+            let qtdCred = 0;
+            let qtdDeb = 0;
+
+            periodoFiltrado.forEach(m => {
+                const c = Number(m.credito) || 0;
+                const d = Number(m.debito) || 0;
+                if (c > 0) { totalCreditos += c; qtdCred++; }
+                if (d > 0) { totalDebitos += d; qtdDeb++; }
+            });
+
+            const saldoFinal = saldoAnterior + totalCreditos - totalDebitos;
+
+            // Atualiza Cards
+            document.getElementById('cardSaldoAnterior').innerText = `R$ ${saldoAnterior.toFixed(2)}`;
+            document.getElementById('cardTotalEntradas').innerText = `R$ ${totalCreditos.toFixed(2)}`;
+            document.getElementById('cardQtdEntradas').innerText = `${qtdCred} créditos no período`;
+            document.getElementById('cardTotalSaidas').innerText = `R$ ${totalDebitos.toFixed(2)}`;
+            document.getElementById('cardQtdSaidas').innerText = `${qtdDeb} débitos no período`;
+            document.getElementById('cardSaldoFinal').innerText = `R$ ${saldoFinal.toFixed(2)}`;
+            
+            const cardRes = document.getElementById('cardStatusResultado');
+            if (totalCreditos >= totalDebitos) {
+                cardRes.innerText = `Superávit: +R$ ${(totalCreditos - totalDebitos).toFixed(2)}`;
+                cardRes.className = "text-[10px] font-bold text-emerald-700";
+            } else {
+                cardRes.innerText = `Déficit: -R$ ${(totalDebitos - totalCreditos).toFixed(2)}`;
+                cardRes.className = "text-[10px] font-bold text-red-700";
+            }
+
+            document.getElementById('countLinhasExtrato').innerText = `${periodoFiltrado.length} lançamentos`;
+
+            // Soma das colunas do Livro Caixa a partir de 00,00
+            const footLC = document.getElementById('livroCaixaFoot');
+            if (footLC) {
+                footLC.innerHTML = `
+                    <tr class="bg-amber-50 font-bold border-t-2 border-[#6e473b] text-slate-900">
+                        <td colspan="4" class="py-3 px-3 uppercase text-[#6e473b] font-bold">
+                            💰 Total do Período (R$)
+                        </td>
+                        <td class="py-3 px-3 text-right font-extrabold text-emerald-700 whitespace-nowrap">
+                            +R$ ${totalCreditos.toFixed(2)}
+                        </td>
+                        <td class="py-3 px-3 text-right font-extrabold text-red-700 whitespace-nowrap">
+                            -R$ ${totalDebitos.toFixed(2)}
+                        </td>
+                        <td class="py-3 px-3 text-right font-black text-slate-900 whitespace-nowrap">
+                            R$ ${saldoFinal.toFixed(2)}
+                        </td>
+                        <td class="py-3 px-3 text-center text-slate-400 no-print">—</td>
+                    </tr>
+                `;
+            }
+
+            // 4. Renderiza Tabela com Saldo Cumulativo Linha a Linha
+            const tbody = document.getElementById('livroCaixaBody');
+            tbody.innerHTML = '';
+
+            if (periodoFiltrado.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-slate-400">Nenhuma movimentação financeira registrada neste período.</td></tr>';
+                return;
+            }
+
+            const user = getUsuarioLogado();
+            const podeEditar = user && (user.perfil === 'admin' || user.perfil === 'editor');
+
+            let saldoLinha = saldoAnterior;
+            periodoFiltrado.forEach((m, idx) => {
+                const cred = Number(m.credito) || 0;
+                const deb = Number(m.debito) || 0;
+                saldoLinha = saldoLinha + cred - deb;
+
+                const [anoP, mesP, diaP] = m.data.split('-');
+                const dataFormatada = diaP ? `${diaP}/${mesP}/${anoP}` : m.data;
+
+                const credTxt = cred > 0 ? `<span class="font-bold text-emerald-700">+R$ ${cred.toFixed(2)}</span>` : '<span class="text-slate-300">—</span>';
+                const debTxt = deb > 0 ? `<span class="font-bold text-red-700">-R$ ${deb.toFixed(2)}</span>` : '<span class="text-slate-300">—</span>';
+                const saldoTxt = saldoLinha >= 0 ? `<strong class="text-slate-800">R$ ${saldoLinha.toFixed(2)}</strong>` : `<strong class="text-red-700">R$ ${saldoLinha.toFixed(2)}</strong>`;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="py-2.5 px-3 font-semibold text-slate-700 whitespace-nowrap">${dataFormatada}</td>
+                        <td class="py-2.5 px-3 font-medium text-slate-900">${m.descricao}</td>
+                        <td class="py-2.5 px-3 text-slate-500">${m.categoria || 'Geral'}</td>
+                        <td class="py-2.5 px-3 text-slate-500">${m.forma_pagamento || 'PIX'}</td>
+                        <td class="py-2.5 px-3 text-right">${credTxt}</td>
+                        <td class="py-2.5 px-3 text-right">${debTxt}</td>
+                        <td class="py-2.5 px-3 text-right">${saldoTxt}</td>
+                        <td class="py-2.5 px-3 text-center no-print whitespace-nowrap">
+                            ${podeEditar ? `
+                                <button onclick="editarMovimentacao(${m.id})" class="text-[11px] text-amber-700 hover:text-amber-900 font-semibold px-2 py-0.5 rounded hover:bg-amber-50 mr-1">Editar</button>
+                                <button onclick="excluirMovimentacao(${m.id})" class="text-[11px] text-red-600 hover:text-red-800 font-semibold px-2 py-0.5 rounded hover:bg-red-50">Excluir</button>
+                            ` : '<span class="text-slate-400">—</span>'}
+                        </td>
+                    </tr>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+                function ajustarEstiloTipoMov() {
+            const sel = document.getElementById('mov_tipo');
+            if (!sel) return;
+            if (sel.value === 'credito') {
+                sel.className = "w-full p-2 border rounded-lg text-sm font-bold bg-emerald-50 text-emerald-800 border-emerald-300";
+            } else {
+                sel.className = "w-full p-2 border rounded-lg text-sm font-bold bg-red-50 text-red-800 border-red-300";
+            }
+        }
+
+        
+        // ==========================================
+        // 🗑️ ZERAR E LIMPAR TODO O LIVRO CAIXA
+        // ==========================================
+        async function handleZerarLivroCaixa() {
+            const user = getUsuarioLogado();
+            if (user && user.perfil === 'visualizador') {
+                alert('Modo de Visualização Somente: Você não possui permissão para alterar o livro caixa.');
+                return;
+            }
+
+            if (!confirm('CONFIRMAÇÃO: Deseja realmente APAGAR todas as movimentações de teste do Livro Caixa?\n\nIsso removerá completamente o saldo acumulado (R$ 2010,00) deixando o saldo em R$ 0,00 tanto neste aparelho quanto na nuvem.')) {
+                return;
+            }
+
+            // 1. Limpa o cache local e localStorage
+            MOVIMENTACOES_CACHE = [];
+            setMovimentacoes([]);
+            renderFinanceiro();
+
+            // 2. Apaga da nuvem no Supabase
+            if (sb) {
+                try {
+                    const { error } = await sb.from('movimentacoes').delete().neq('id', 0);
+                    if (error) {
+                        console.error('Erro ao deletar movimentações no Supabase:', error);
+                    }
+                } catch (err) {
+                    console.error('Erro de conexão com Supabase:', err);
+                }
+            }
+
+            alert('Livro Caixa zerado com sucesso! O saldo acumulado foi redefinido para R$ 0,00.');
+        }
+
+        function abrirModalMovimentacao() {
+            const user = getUsuarioLogado();
+            if (user && user.perfil === 'visualizador') {
+                alert('Modo de Visualização Somente: Você não possui permissão para lançar movimentações.');
+                return;
+            }
+            document.getElementById('modalMovTitle').innerText = 'Lançar Nova Movimentação';
+            document.getElementById('mov_id').value = '';
+            document.getElementById('mov_data').value = new Date().toISOString().split('T')[0];
+            document.getElementById('mov_tipo').value = 'credito';
+            document.getElementById('mov_descricao').value = '';
+            document.getElementById('mov_valor').value = '';
+            document.getElementById('mov_forma').value = 'PIX';
+            document.getElementById('mov_categoria').value = 'Mensalidades';
+            document.getElementById('mov_obs').value = '';
+            document.getElementById('modalMovimentacao').classList.remove('hidden');
+        }
+
+        function editarMovimentacao(id) {
+            const movs = getMovimentacoes();
+            const m = movs.find(x => x.id === id);
+            if (!m) return;
+
+            document.getElementById('modalMovTitle').innerText = 'Editar Movimentação Financeira';
+            document.getElementById('mov_id').value = m.id;
+            document.getElementById('mov_data').value = m.data;
+            const isCred = (Number(m.credito) || 0) > 0;
+            document.getElementById('mov_tipo').value = isCred ? 'credito' : 'debito';
+            document.getElementById('mov_descricao').value = m.descricao;
+            document.getElementById('mov_valor').value = isCred ? m.credito : m.debito;
+            document.getElementById('mov_forma').value = m.forma_pagamento || 'PIX';
+            document.getElementById('mov_categoria').value = m.categoria || 'Mensalidades';
+            document.getElementById('mov_obs').value = m.observacoes || '';
+            document.getElementById('modalMovimentacao').classList.remove('hidden');
+        }
+
+        async function handleSalvarMovimentacao(e) {
+            e.preventDefault();
+            const idVal = document.getElementById('mov_id').value;
+            const dataVal = document.getElementById('mov_data').value;
+            const tipoVal = document.getElementById('mov_tipo').value;
+            const descVal = document.getElementById('mov_descricao').value.trim();
+            const valorVal = parseFloat(document.getElementById('mov_valor').value) || 0;
+            const formaVal = document.getElementById('mov_forma').value;
+            const catVal = document.getElementById('mov_categoria').value;
+            const obsVal = document.getElementById('mov_obs').value.trim();
+
+            if (!descVal || valorVal <= 0) {
+                alert('Informe uma descrição válida e um valor maior que zero.');
+                return;
+            }
+
+            const credito = tipoVal === 'credito' ? valorVal : 0;
+            const debito = tipoVal === 'debito' ? valorVal : 0;
+
+            const registro = {
+                data: dataVal,
+                descricao: descVal,
+                categoria: catVal,
+                forma_pagamento: formaVal,
+                credito: credito,
+                debito: debito,
+                observacoes: obsVal
+            };
+
+            // Salva no Supabase se conectado
+            if (sb) {
+                try {
+                    if (idVal && idVal !== '') {
+                        await sb.from('movimentacoes').update(registro).eq('id', idVal);
+                    } else {
+                        await sb.from('movimentacoes').insert([registro]);
+                    }
+                    await sincronizarComNuvem();
+                } catch (err) {
+                    console.error('Erro no Supabase financeiro:', err);
+                }
+            } else {
+                // Fallback Local
+                const movs = getMovimentacoes();
+                if (idVal && idVal !== '') {
+                    const idx = movs.findIndex(x => x.id === parseInt(idVal));
+                    if (idx >= 0) {
+                        registro.id = parseInt(idVal);
+                        movs[idx] = registro;
+                    }
+                } else {
+                    registro.id = Date.now();
+                    movs.push(registro);
+                }
+                setMovimentacoes(movs);
+            }
+
+            closeModal('modalMovimentacao');
+            renderFinanceiro();
+            alert('Movimentação gravada com sucesso!');
+        }
+
+        async function excluirMovimentacao(id) {
+            if (confirm('Deseja realmente excluir este lançamento financeiro?')) {
+                if (sb) {
+                    try {
+                        await sb.from('movimentacoes').delete().eq('id', id);
+                        await sincronizarComNuvem();
+                    } catch (err) {
+                        console.error('Erro ao excluir no Supabase:', err);
+                    }
+                } else {
+                    const movs = getMovimentacoes().filter(x => x.id !== id);
+                    setMovimentacoes(movs);
+                }
+                renderFinanceiro();
+            }
+        }
+
+        function exportarExcelLivroCaixa() {
+            const movs = getMovimentacoes();
+            const anoSel = parseInt(document.getElementById('selAnoFinanceiro').value);
+            const mesSel = document.getElementById('selMesFinanceiro').value;
+
+            let dataInicio = `${anoSel}-01-01`;
+            let dataFim = `${anoSel}-12-31`;
+            if (mesSel !== 'todos') {
+                const mesNum = parseInt(mesSel);
+                dataInicio = `${anoSel}-${String(mesNum).padStart(2, '0')}-01`;
+                const ultimoDia = new Date(anoSel, mesNum, 0).getDate();
+                dataFim = `${anoSel}-${String(mesNum).padStart(2, '0')}-${String(ultimoDia).padStart(2, '0')}`;
+            }
+
+            const filtradas = [...movs].filter(m => m.data >= dataInicio && m.data <= dataFim).sort((a,b) => new Date(a.data) - new Date(b.data));
+
+            let saldo = 0;
+            // saldo anterior
+            movs.forEach(m => {
+                if (m.data < dataInicio) saldo += (Number(m.credito) || 0) - (Number(m.debito) || 0);
+            });
+
+            const rows = filtradas.map(m => {
+                const c = Number(m.credito) || 0;
+                const d = Number(m.debito) || 0;
+                saldo = saldo + c - d;
+                return {
+                    Data: m.data,
+                    Descricao: m.descricao,
+                    Categoria: m.categoria,
+                    Forma_Pagamento: m.forma_pagamento,
+                    Credito_Entrada: c,
+                    Debito_Saida: d,
+                    Saldo_Acumulado: saldo,
+                    Observacoes: m.observacoes || ''
+                };
+            });
+
+            const ws = XLSX.utils.json_to_sheet(rows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Livro Caixa OCDS");
+            XLSX.writeFile(wb, `Livro_Caixa_OCDS_${anoSel}_Mes_${mesSel}.xlsx`);
+        }
+
+        // TABELA DE MEMBROS
+        function renderMembrosTable() {
+            const membros = getMembros();
+            const q = document.getElementById('searchMembroInput').value.toLowerCase();
+            const st = document.getElementById('filterStatusMembro').value;
+            const tbody = document.getElementById('membrosTableBody');
+            tbody.innerHTML = '';
+
+            const user = getUsuarioLogado();
+            const podeEditar = user && (user.perfil === 'admin' || user.perfil === 'editor');
+
+            const filtrados = membros.filter(m => {
+                const matchQ = (m.nome || '').toLowerCase().includes(q) ||
+                               (m.nome_religioso || '').toLowerCase().includes(q) ||
+                               (m.telefone || '').includes(q) ||
+                               (m.cpf || '').includes(q);
+                const matchSt = (st === 'Todos') || (m.status === st);
+                return matchQ && matchSt;
+            });
+
+            if (filtrados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-6 text-slate-400">Nenhum membro encontrado.</td></tr>';
+                return;
+            }
+
+            filtrados.forEach((m) => {
+                const idx = membros.indexOf(m);
+                let badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                if (m.status === 'Emérito') badgeClass = 'bg-blue-50 text-blue-700 border-blue-200';
+                if (m.status === 'Falecido(a)') badgeClass = 'bg-slate-100 text-slate-700 border-slate-300';
+                if (m.status === 'Afastado') badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="py-3 px-4 font-semibold text-slate-800">${m.nome}</td>
+                        <td class="py-3 px-4 text-slate-500 italic text-xs">${m.nome_religioso || '—'}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border ${badgeClass}">${m.status}</span>
+                        </td>
+                        <td class="py-3 px-4 text-slate-600 text-xs">${m.telefone || '—'}</td>
+                        <td class="py-3 px-4 text-slate-600 text-xs">${m.data_promessas_definitivas || '—'}</td>
+                        <td class="py-3 px-4 text-center whitespace-nowrap space-x-1">
+                            <button onclick="verFichaMembro(${idx})" class="text-xs bg-slate-100 hover:bg-[#6e473b] hover:text-white text-slate-700 px-2.5 py-1 rounded transition">
+                                Ficha
+                            </button>
+                            ${podeEditar ? `<button onclick="editarMembroModal(${idx})" class="text-xs bg-amber-50 hover:bg-amber-600 hover:text-white text-amber-800 px-2.5 py-1 rounded transition">Editar</button>` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // NOVO / EDITAR MEMBRO COM SUPABASE
+        function openModalNovoMembro() {
+            document.getElementById('modalMembroTitle').innerText = 'Cadastrar Novo Membro';
+            document.getElementById('formMembro').reset();
+            document.getElementById('editMembroId').value = '';
+            document.getElementById('btnExcluirMembro').classList.add('hidden');
+            document.getElementById('modalMembroForm').classList.remove('hidden');
+        }
+
+        function editarMembroModal(idx) {
+            const m = getMembros()[idx];
+            if (!m) return;
+            document.getElementById('modalMembroTitle').innerText = 'Editar Membro: ' + m.nome;
+            document.getElementById('editMembroId').value = m.id || idx;
+            document.getElementById('f_nome').value = m.nome || '';
+            document.getElementById('f_religioso').value = m.nome_religioso || '';
+            document.getElementById('f_nasc').value = m.data_nascimento || '';
+            document.getElementById('f_status').value = m.status || 'Ativo';
+            document.getElementById('f_rg').value = m.rg || '';
+            document.getElementById('f_cpf').value = m.cpf || '';
+            document.getElementById('f_estcivil').value = m.estado_civil || '';
+            document.getElementById('f_conjuge').value = m.conjuge || '';
+            document.getElementById('f_endereco').value = m.endereco || '';
+            document.getElementById('f_bairro').value = m.bairro || '';
+            document.getElementById('f_cidade').value = m.cidade || 'Itapetininga-SP';
+            document.getElementById('f_tel').value = m.telefone || '';
+            document.getElementById('f_email').value = m.email || '';
+            document.getElementById('f_entrada').value = m.data_entrada_ocds || '';
+            document.getElementById('f_sanatio').value = m.data_sanatio || '';
+            document.getElementById('f_admissao').value = m.data_admissao || '';
+            document.getElementById('f_frei_adm').value = m.frei_admissao || '';
+            document.getElementById('f_prom_temp').value = m.data_promessas_temporarias || '';
+            document.getElementById('f_frei_temp').value = m.frei_promessas_temp || '';
+            document.getElementById('f_prom_def').value = m.data_promessas_definitivas || '';
+            document.getElementById('f_frei_def').value = m.frei_promessas_def || '';
+            document.getElementById('f_obs').value = m.observacoes || '';
+
+            const user = getUsuarioLogado();
+            if (user && user.perfil === 'admin') {
+                document.getElementById('btnExcluirMembro').classList.remove('hidden');
+            } else {
+                document.getElementById('btnExcluirMembro').classList.add('hidden');
+            }
+            document.getElementById('modalMembroForm').classList.remove('hidden');
+        }
+
+        async function handleSalvarMembro(e) {
+            e.preventDefault();
+            const idVal = document.getElementById('editMembroId').value;
+            
+            const novo = {
+                nome: document.getElementById('f_nome').value.trim(),
+                nome_religioso: document.getElementById('f_religioso').value.trim(),
+                data_nascimento: document.getElementById('f_nasc').value.trim(),
+                status: document.getElementById('f_status').value,
+                rg: document.getElementById('f_rg').value.trim(),
+                cpf: document.getElementById('f_cpf').value.trim(),
+                estado_civil: document.getElementById('f_estcivil').value.trim(),
+                conjuge: document.getElementById('f_conjuge').value.trim(),
+                endereco: document.getElementById('f_endereco').value.trim(),
+                bairro: document.getElementById('f_bairro').value.trim(),
+                cidade: document.getElementById('f_cidade').value.trim() || 'Itapetininga-SP',
+                telefone: document.getElementById('f_tel').value.trim(),
+                email: document.getElementById('f_email').value.trim(),
+                data_entrada_ocds: document.getElementById('f_entrada').value.trim(),
+                data_sanatio: document.getElementById('f_sanatio').value.trim(),
+                data_admissao: document.getElementById('f_admissao').value.trim(),
+                frei_admissao: document.getElementById('f_frei_adm').value.trim(),
+                data_promessas_temporarias: document.getElementById('f_prom_temp').value.trim(),
+                frei_promessas_temp: document.getElementById('f_frei_temp').value.trim(),
+                data_promessas_definitivas: document.getElementById('f_prom_def').value.trim(),
+                frei_promessas_def: document.getElementById('f_frei_def').value.trim(),
+                observacoes: document.getElementById('f_obs').value.trim()
+            };
+
+            if (sb) {
+                try {
+                    if (idVal && idVal !== '') {
+                        await sb.from('membros').update(novo).eq('id', idVal);
+                    } else {
+                        await sb.from('membros').insert([novo]);
+                    }
+                    await sincronizarComNuvem();
+                } catch (err) {
+                    console.error('Erro ao salvar no Supabase:', err);
+                }
+            }
+
+            closeModal('modalMembroForm');
+            renderMembrosTable();
+            updateDashboard();
+        }
+
+        async function excluirMembroAtual() {
+            const idVal = document.getElementById('editMembroId').value;
+            if (idVal && confirm('Tem certeza que deseja excluir este membro do sistema na nuvem?')) {
+                if (sb) {
+                    try {
+                        await sb.from('membros').delete().eq('id', idVal);
+                        await sincronizarComNuvem();
+                    } catch (err) {
+                        console.error('Erro ao excluir no Supabase:', err);
+                    }
+                }
+                closeModal('modalMembroForm');
+                renderMembrosTable();
+                updateDashboard();
+            }
+        }
+
+        // MENSALIDADES COM SUPABASE & CONTROLE DE VALORES A PARTIR DE 00,00
+        function renderMensalidadesGrid() {
+            const membros = getMembros();
+            const mensalidades = getMensalidades();
+            const ano = document.getElementById('selAnoMensalidade').value;
+            const tbody = document.getElementById('gridMensalidadesBody');
+            const tfoot = document.getElementById('gridMensalidadesFoot');
+            tbody.innerHTML = '';
+
+            // Acumuladores de soma por coluna (mês a mês a partir de 0.00)
+            const somaColunas = Array(13).fill(0.00);
+            const qtdPagosColunas = Array(13).fill(0);
+            let somaTotalAno = 0.00;
+
+            membros.forEach(m => {
+                let colsHtml = '';
+                let somaMembroAno = 0.00;
+
+                for (let mes = 1; mes <= 12; mes++) {
+                    const reg = mensalidades[m.nome]?.[ano]?.[mes];
+                    const isEm = m.status === 'Emérito' || m.status === 'Falecido(a)';
+                    let st = reg ? (typeof reg === 'object' ? reg.status : reg) : (isEm ? 'Isento' : 'Pendente');
+                    
+                    // Valor padrão: 0.00 se não foi lançado outro valor
+                    let val = 0.00;
+                    if (reg && typeof reg === 'object' && reg.valor !== undefined && reg.valor !== null) {
+                        val = parseFloat(reg.valor) || 0.00;
+                    }
+
+                    let btnColor = 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200';
+                    let label = `R$ ${val.toFixed(2)}`;
+                    
+                    if (st === 'Pago') {
+                        btnColor = 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 font-bold border border-emerald-300';
+                        label = `✓ R$ ${val.toFixed(2)}`;
+                        // Soma da coluna a partir de 00,00
+                        somaColunas[mes] += val;
+                        qtdPagosColunas[mes]++;
+                        somaMembroAno += val;
+                        somaTotalAno += val;
+                    } else if (st === 'Isento') {
+                        btnColor = 'bg-slate-100 text-slate-400 border border-slate-200';
+                        label = '— Isento';
+                    }
+
+                    colsHtml += `
+                        <td class="py-2 px-1 text-center">
+                            <button onclick="abrirModalMensalidade('${encodeURIComponent(m.nome)}', '${ano}', ${mes})" class="w-full py-1.5 rounded text-[10px] ${btnColor} transition shadow-xs whitespace-nowrap" title="Clique para alterar valor ou situação">
+                                ${label}
+                            </button>
+                        </td>
+                    `;
+                }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="py-2.5 px-3 font-semibold text-slate-800 whitespace-nowrap">
+                            <div class="flex items-center gap-1.5">
+                                <span>${m.nome}</span>
+                                ${m.status === 'Emérito' ? '<span class="text-[9px] bg-blue-50 text-blue-600 px-1 py-0.5 rounded font-bold border border-blue-200">Emérito</span>' : ''}
+                                ${m.status === 'Falecido(a)' ? '<span class="text-[9px] bg-slate-100 text-slate-600 px-1 py-0.5 rounded font-bold border border-slate-300">Falecido</span>' : ''}
+                            </div>
+                        </td>
+                        ${colsHtml}
+                        <td class="py-2.5 px-3 text-right font-bold text-slate-900 bg-slate-50/50 whitespace-nowrap">
+                            R$ ${somaMembroAno.toFixed(2)}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // 3. SOMA DAS COLUNAS COM VALORES A PARTIR DE 00,00
+            if (tfoot) {
+                let footColsHtml = '';
+                for (let mes = 1; mes <= 12; mes++) {
+                    footColsHtml += `
+                        <td class="py-3 px-1 text-center font-extrabold text-emerald-800 whitespace-nowrap">
+                            <div>R$ ${somaColunas[mes].toFixed(2)}</div>
+                            <div class="text-[9px] text-slate-500 font-normal">(${qtdPagosColunas[mes]} pagos)</div>
+                        </td>
+                    `;
+                }
+
+                tfoot.innerHTML = `
+                    <tr class="bg-amber-50/90 border-t-2 border-[#6e473b] text-slate-900 shadow-sm">
+                        <td class="py-3 px-3 font-bold uppercase text-[#6e473b] whitespace-nowrap flex items-center gap-1">
+                            <i data-lucide="calculator" class="w-3.5 h-3.5 inline"></i> Total da Coluna (R$)
+                        </td>
+                        ${footColsHtml}
+                        <td class="py-3 px-3 text-right font-black text-[#6e473b] bg-amber-100 whitespace-nowrap text-sm border-l border-amber-200">
+                            R$ ${somaTotalAno.toFixed(2)}
+                        </td>
+                    </tr>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        function abrirModalMensalidade(nomeEnc, ano, mes) {
+            const user = getUsuarioLogado();
+            if (user && user.perfil === 'visualizador') {
+                alert('Modo de Visualização Somente: Você não possui permissão para editar mensalidades.');
+                return;
+            }
+
+            const nome = decodeURIComponent(nomeEnc);
+            const mensalidades = getMensalidades();
+            const mesesNomes = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+            document.getElementById('m_membroNome').value = nome;
+            document.getElementById('m_ano').value = ano;
+            document.getElementById('m_mes').value = mes;
+            document.getElementById('m_labelMembro').innerText = nome;
+            document.getElementById('m_labelReferencia').innerText = `Referência: ${mesesNomes[mes]} de ${ano}`;
+
+            const reg = mensalidades[nome]?.[ano]?.[mes];
+            const st = reg ? (typeof reg === 'object' ? reg.status : reg) : 'Pendente';
+            
+            // 1. NO CAMPO MENSALIDADE FICAR O VALOR DE 00.00 (ou valor salvo), SEM FORÇAR VALOR ANTERIOR
+            let val = 0.00;
+            if (reg && typeof reg === 'object' && reg.valor !== undefined && reg.valor !== null) {
+                val = parseFloat(reg.valor) || 0.00;
+            }
+            
+            const forma = (reg && typeof reg === 'object' && reg.forma) ? reg.forma : 'PIX';
+            const obs = (reg && typeof reg === 'object' && reg.observacao) ? reg.observacao : 'Mensalidade OCDS';
+
+            document.getElementById('m_status').value = st;
+            document.getElementById('m_valor').value = val.toFixed(2);
+            document.getElementById('m_forma').value = forma;
+            document.getElementById('m_obs').value = obs;
+
+            document.getElementById('modalMensalidade').classList.remove('hidden');
+        }
+
+        async function handleSalvarMensalidade(e) {
+            e.preventDefault();
+            const nome = document.getElementById('m_membroNome').value;
+            const ano = parseInt(document.getElementById('m_ano').value);
+            const mes = parseInt(document.getElementById('m_mes').value);
+            
+            // Lê o valor exato digitado pelo usuário a partir de 00.00 (sem trocar 0 por padrão)
+            const valRaw = document.getElementById('m_valor').value;
+            const valor = (valRaw !== '' && !isNaN(parseFloat(valRaw))) ? parseFloat(valRaw) : 0.00;
+            
+            const status = document.getElementById('m_status').value;
+            const forma = document.getElementById('m_forma').value;
+            const obs = document.getElementById('m_obs').value;
+            const dataPag = (status === 'Pago') ? new Date().toISOString().split('T')[0] : null;
+
+            // 1. Salva localmente IMEDIATAMENTE no cache e no localStorage
+            const mensalidades = getMensalidades();
+            if (!mensalidades[nome]) mensalidades[nome] = {};
+            if (!mensalidades[nome][ano]) mensalidades[nome][ano] = {};
+            mensalidades[nome][ano][mes] = {
+                status: status,
+                valor: valor,
+                forma: forma,
+                observacao: obs,
+                data: dataPag
+            };
+            setMensalidades(mensalidades);
+
+            // 2. Fecha modal e atualiza a tela na hora
+            closeModal('modalMensalidade');
+            renderMensalidadesGrid();
+            updateDashboard();
+
+            // 3. Sincroniza com Supabase se conectado
+            if (sb) {
+                try {
+                    const item = {
+                        membro_nome: nome,
+                        ano: ano,
+                        mes: mes,
+                        valor: valor,
+                        status: status,
+                        forma_pagamento: forma,
+                        observacao: obs,
+                        data_pagamento: dataPag
+                    };
+                    const { error: upsertErr } = await sb.from('mensalidades').upsert(item, { onConflict: 'membro_nome,ano,mes' });
+                    if (upsertErr) {
+                        console.warn('Upsert falhou, tentando delete + insert:', upsertErr);
+                        await sb.from('mensalidades').delete().match({ membro_nome: nome, ano: ano, mes: mes });
+                        await sb.from('mensalidades').insert([item]);
+                    }
+                } catch (err) {
+                    console.error('Erro ao salvar mensalidade no Supabase:', err);
+                }
+            }
+        }
+
+        // MODAL LOTE CORRIGIDO E FUNCIONAL
+        function openModalLote() {
+            const user = getUsuarioLogado();
+            if (user && user.perfil === 'visualizador') {
+                alert('Modo de Visualização Somente: Você não possui permissão para lançar mensalidades.');
+                return;
+            }
+
+            // Exibe todos os membros não-falecidos para escolha
+            const membros = getMembros().filter(m => (m.status || '').trim() !== 'Falecido(a)');
+            const target = document.getElementById('listaLoteMembros');
+            target.innerHTML = '';
+            
+            membros.forEach(m => {
+                target.innerHTML += `
+                    <label class="flex items-center gap-2 p-2 hover:bg-emerald-50/50 rounded-lg cursor-pointer border border-slate-100 transition">
+                        <input type="checkbox" name="loteMembroChk" value="${m.nome}" class="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4">
+                        <span class="text-xs text-slate-800 font-medium">${m.nome}</span>
+                        ${m.status === 'Emérito' ? '<span class="text-[9px] bg-blue-50 text-blue-600 px-1 py-0.5 rounded ml-auto">Emérito</span>' : ''}
+                    </label>
+                `;
+            });
+
+            // Valor padrão no lote: 0.00 (ou o valor que o usuário digitar)
+            document.getElementById('lote_valor').value = "0.00";
+            document.getElementById('modalLote').classList.remove('hidden');
+        }
+
+        
+        // ==========================================
+        // 🔄 ZERAR / RESETAR LANÇAMENTOS DO MÊS
+        // ==========================================
+        async function handleZerarMes() {
+            const user = getUsuarioLogado();
+            if (user && user.perfil === 'visualizador') {
+                alert('Modo de Visualização Somente: Você não possui permissão para alterar mensalidades.');
+                return;
+            }
+
+            const ano = parseInt(document.getElementById('selAnoMensalidade').value);
+            const mesesNomes = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            
+            const mesEscolha = prompt(`Digite o número do mês que deseja ZERAR (1 para Jan ... 9 para Set ... 12 para Dez) no ano ${ano}:`, '9');
+            if (!mesEscolha) return;
+
+            const mes = parseInt(mesEscolha);
+            if (isNaN(mes) || mes < 1 || mes > 12) {
+                alert('Mês inválido digitado.');
+                return;
+            }
+
+            if (!confirm(`CONFIRMAÇÃO: Deseja realmente ZERAR todos os lançamentos de ${mesesNomes[mes]}/${ano}? \n\nTodos os membros serão marcados como PENDENTE com valor R$ 0,00 e o total do painel será zerado.`)) {
+                return;
+            }
+
+            const membros = getMembros();
+            const mensalidades = getMensalidades();
+
+            membros.forEach(m => {
+                if (!mensalidades[m.nome]) mensalidades[m.nome] = {};
+                if (!mensalidades[m.nome][ano]) mensalidades[m.nome][ano] = {};
+                mensalidades[m.nome][ano][mes] = {
+                    status: (m.status === 'Emérito' || m.status === 'Falecido(a)') ? 'Isento' : 'Pendente',
+                    valor: 0.00,
+                    forma: 'PIX',
+                    observacao: 'Lançamento zerado',
+                    data: null
+                };
+            });
+            setMensalidades(mensalidades);
+
+            // Atualiza tela imediatamente
+            renderMensalidadesGrid();
+            updateDashboard();
+
+            // Sincroniza com Supabase na nuvem
+            if (sb) {
+                try {
+                    const batch = membros.map(m => ({
+                        membro_nome: m.nome,
+                        ano: ano,
+                        mes: mes,
+                        valor: 0.00,
+                        status: (m.status === 'Emérito' || m.status === 'Falecido(a)') ? 'Isento' : 'Pendente',
+                        forma_pagamento: 'PIX',
+                        observacao: 'Lançamento zerado',
+                        data_pagamento: null
+                    }));
+                    const { error } = await sb.from('mensalidades').upsert(batch, { onConflict: 'membro_nome,ano,mes' });
+                    if (error) {
+                        for (const item of batch) {
+                            await sb.from('mensalidades').delete().match({ membro_nome: item.membro_nome, ano: item.ano, mes: item.mes });
+                            await sb.from('mensalidades').insert([item]);
+                        }
+                    }
+                } catch (err) {
+                    console.error('Erro ao zerar no Supabase:', err);
+                }
+            }
+
+            alert(`Os lançamentos de ${mesesNomes[mes]} de ${ano} foram zerados com sucesso! O valor arrecadado foi redefinido para R$ 0,00.`);
+        }
+
+        function toggleSelectAllLote() {
+            const chks = document.querySelectorAll('input[name="loteMembroChk"]');
+            const allChecked = Array.from(chks).every(c => c.checked);
+            chks.forEach(c => c.checked = !allChecked);
+        }
+
+        async function handleSalvarLote(e) {
+            e.preventDefault();
+            const mes = parseInt(document.getElementById('lote_mes').value);
+            const valLoteRaw = document.getElementById('lote_valor').value;
+            const valor = (valLoteRaw !== '' && !isNaN(parseFloat(valLoteRaw))) ? parseFloat(valLoteRaw) : 0.00;
+            const forma = document.getElementById('lote_forma').value;
+            const ano = parseInt(document.getElementById('selAnoMensalidade').value);
+
+            const chks = document.querySelectorAll('input[name="loteMembroChk"]:checked');
+            const selecionados = Array.from(chks).map(c => c.value);
+            
+            if (selecionados.length === 0) {
+                alert('Selecione pelo menos um membro na lista.');
+                return;
+            }
+
+            const dataHoje = new Date().toISOString().split('T')[0];
+
+            // 1. SALVA IMEDIATAMENTE NO CACHE LOCAL E LOCALSTORAGE
+            const mensalidades = getMensalidades();
+            selecionados.forEach(nome => {
+                if (!mensalidades[nome]) mensalidades[nome] = {};
+                if (!mensalidades[nome][ano]) mensalidades[nome][ano] = {};
+                mensalidades[nome][ano][mes] = {
+                    status: 'Pago',
+                    valor: valor,
+                    forma: forma,
+                    observacao: 'Recebimento em lote na reunião',
+                    data: dataHoje
+                };
+            });
+            setMensalidades(mensalidades);
+
+            // 2. ATUALIZA A TELA NA HORA
+            closeModal('modalLote');
+            renderMensalidadesGrid();
+            updateDashboard();
+
+            // 3. SINCRONIZA COM SUPABASE
+            if (sb) {
+                try {
+                    const batch = selecionados.map(nome => ({
+                        membro_nome: nome,
+                        ano: ano,
+                        mes: mes,
+                        valor: valor,
+                        status: 'Pago',
+                        forma_pagamento: forma,
+                        observacao: 'Recebimento em lote na reunião',
+                        data_pagamento: dataHoje
+                    }));
+                    
+                    const { error: upsertErr } = await sb.from('mensalidades').upsert(batch, { onConflict: 'membro_nome,ano,mes' });
+                    if (upsertErr) {
+                        console.warn('Upsert em lote falhou, tentando delete + insert:', upsertErr);
+                        for (const item of batch) {
+                            await sb.from('mensalidades').delete().match({ membro_nome: item.membro_nome, ano: item.ano, mes: item.mes });
+                            await sb.from('mensalidades').insert([item]);
+                        }
+                    }
+                } catch (err) {
+                    console.error('Erro ao salvar lote no Supabase:', err);
+                }
+            }
+
+            alert(`Pagamento em lote de ${selecionados.length} membros registrado com sucesso! Valor lançado: R$ ${valor.toFixed(2)} cada.`);
+        }
+
+        // SENHAS E USUÁRIOS NO SUPABASE
+        function renderUsuariosTable() {
+            const users = getUsuarios();
+            const tbody = document.getElementById('listaUsuariosBody');
+            tbody.innerHTML = '';
+            
+            const nivelMap = {
+                admin: '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-bold">Administrador</span>',
+                editor: '<span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-bold">Edição</span>',
+                visualizador: '<span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded font-bold">Visualização Somente</span>'
+            };
+
+            users.forEach((u) => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2.5 font-semibold text-slate-800">${u.nome}</td>
+                        <td class="p-2.5 text-slate-600">${u.email || ''}</td>
+                        <td class="p-2.5">${nivelMap[u.perfil] || u.perfil}</td>
+                        <td class="p-2.5 text-center text-slate-400 text-xs">Gerencie no painel do Supabase</td>
+                    </tr>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        async function handleCadastrarUsuario(e) {
+            e.preventDefault();
+            alert('Por segurança, novos acessos agora são criados direto no painel do Supabase (Authentication > Users) e depois vinculados a um perfil (tabela "perfis"). Peça para quem administra o Supabase fazer isso.');
+        }
+
+        async function excluirUsuario(idx) {
+            alert('Por segurança, a remoção de acessos agora é feita direto no painel do Supabase (Authentication > Users).');
+        }
+
+        async function handleTrocaSenha(e) {
+            e.preventDefault();
+            const ant = document.getElementById('senhaAtual').value;
+            const nov = document.getElementById('novaSenha').value;
+            const conf = document.getElementById('confirmaSenha').value;
+            const user = getUsuarioLogado();
+
+            if (nov.length < 6) {
+                alert('A nova senha deve ter no mínimo 6 caracteres.');
+                return;
+            }
+            if (nov !== conf) {
+                alert('A confirmação da senha não confere.');
+                return;
+            }
+
+            if (sb && user) {
+                try {
+                    const { error: reAuthErr } = await sb.auth.signInWithPassword({ email: user.email, password: ant });
+                    if (reAuthErr) {
+                        alert('Senha atual incorreta.');
+                        return;
+                    }
+                    const { error } = await sb.auth.updateUser({ password: nov });
+                    if (error) {
+                        alert('Erro ao atualizar senha: ' + error.message);
+                        return;
+                    }
+                    alert('Senha atualizada com sucesso!');
+                    e.target.reset();
+                } catch (err) {
+                    console.error('Erro ao atualizar senha:', err);
+                    alert('Erro ao atualizar senha.');
+                }
+            }
+        }
+
+        // RELATÓRIOS & EXCEL
+        function openRelatorioModal(tipo) {
+            const c = document.getElementById('relatorioContainer');
+            const membros = getMembros();
+            const mensalidades = getMensalidades();
+
+            if (tipo === 'ficha') {
+                let options = membros.map((m, i) => `<option value="${i}">${m.nome}</option>`).join('');
+                c.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between no-print">
+                            <h3 class="font-bold text-lg text-slate-800">Ficha Individual do Membro</h3>
+                            <button onclick="window.print()" class="bg-[#6e473b] text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                                <i data-lucide="printer" class="w-4 h-4"></i> Imprimir / Salvar PDF
+                            </button>
+                        </div>
+                        <div class="no-print">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Selecione o Membro:</label>
+                            <select id="selFichaMembro" onchange="renderFichaRelatorio(this.value)" class="border border-slate-300 rounded-lg p-2 text-sm max-w-md w-full">
+                                ${options}
+                            </select>
+                        </div>
+                        <div id="fichaTarget" class="mt-6"></div>
+                    </div>
+                `;
+                renderFichaRelatorio(0);
+            } else if (tipo === 'geral') {
+                c.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex flex-wrap justify-between items-center gap-2 no-print">
+                            <h3 class="font-bold text-lg text-slate-800">Relatório Geral da Fraternidade (Todos os Membros)</h3>
+                            <div class="flex gap-2">
+                                <button onclick="exportarExcelMembros()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-sm transition">
+                                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Baixar em Excel (.xlsx)
+                                </button>
+                                <button onclick="window.print()" class="bg-[#6e473b] text-white px-4 py-2 rounded-lg text-sm font-semibold">
+                                    🖨️ Imprimir
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto border rounded-lg">
+                            <table class="w-full text-left" id="tabelaGeralMembros">
+                                <thead class="bg-slate-100 text-slate-700 text-xs font-bold uppercase">
+                                    <tr>
+                                        <th class="p-2">Nome</th>
+                                        <th class="p-2">Nome Religioso</th>
+                                        <th class="p-2">Status</th>
+                                        <th class="p-2">Telefone</th>
+                                        <th class="p-2">Admissão</th>
+                                        <th class="p-2">Promessas Def.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${membros.map(m => `
+                                        <tr class="border-b text-xs">
+                                            <td class="p-2 font-semibold">${m.nome}</td>
+                                            <td class="p-2">${m.nome_religioso || '—'}</td>
+                                            <td class="p-2">${m.status}</td>
+                                            <td class="p-2">${m.telefone || '—'}</td>
+                                            <td class="p-2">${m.data_admissao || '—'}</td>
+                                            <td class="p-2">${m.data_promessas_definitivas || '—'}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } else if (tipo === 'mensal') {
+                let pagos = [];
+                let pends = [];
+                let totalArrecadado = 0;
+                let totalPendente = 0;
+
+                membros.forEach(m => {
+                    const reg = mensalidades[m.nome]?.[2026]?.[9];
+                    const isEm = m.status === 'Emérito' || m.status === 'Falecido(a)';
+                    const st = reg ? (typeof reg === 'object' ? reg.status : reg) : (isEm ? 'Isento' : 'Pendente');
+                    const val = (reg && typeof reg === 'object' && reg.valor !== undefined && reg.valor !== null) ? parseFloat(reg.valor) : 0.00;
+                    
+                    if (st === 'Pago') {
+                        pagos.push({ nome: m.nome, valor: val, forma: (reg && reg.forma) || 'PIX' });
+                        totalArrecadado += val;
+                    } else if (st === 'Pendente' && !isEm) {
+                        pends.push({ nome: m.nome, valor: val, telefone: m.telefone || '' });
+                        totalPendente += val;
+                    }
+                });
+
+                c.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex flex-wrap justify-between items-center gap-2 no-print">
+                            <h3 class="font-bold text-lg text-slate-800">Balancete Mensal — Setembro / 2026</h3>
+                            <div class="flex gap-2">
+                                <button onclick="exportarExcelBalancete()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-sm transition">
+                                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Baixar em Excel (.xlsx)
+                                </button>
+                                <button onclick="window.print()" class="bg-[#6e473b] text-white px-4 py-2 rounded-lg text-sm font-semibold">
+                                    🖨️ Imprimir
+                                </button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 mb-4 text-center">
+                            <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-200">
+                                <span class="text-xs text-emerald-700 font-bold block uppercase">Arrecadado</span>
+                                <span class="text-xl font-bold text-emerald-700">R$ ${totalArrecadado.toFixed(2)}</span>
+                            </div>
+                            <div class="bg-red-50 p-3 rounded-lg border border-red-200">
+                                <span class="text-xs text-red-700 font-bold block uppercase">Pendente</span>
+                                <span class="text-xl font-bold text-red-700">R$ ${totalPendente.toFixed(2)}</span>
+                            </div>
+                            <div class="bg-purple-50 p-3 rounded-lg border border-purple-200">
+                                <span class="text-xs text-purple-700 font-bold block uppercase">Adimplência</span>
+                                <span class="text-xl font-bold text-purple-700">${((pagos.length / (pagos.length + pends.length || 1)) * 100).toFixed(1)}%</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="border rounded-lg p-4">
+                                <h4 class="font-bold text-emerald-800 text-xs mb-3 uppercase flex justify-between">
+                                    <span>Quitados (${pagos.length})</span>
+                                    <span>Total: R$ ${totalArrecadado.toFixed(2)}</span>
+                                </h4>
+                                <ul class="text-xs space-y-2">
+                                    ${pagos.map(p => `<li class="flex justify-between border-b pb-1"><span>✓ ${p.nome}</span><span class="font-bold text-emerald-700">R$ ${p.valor.toFixed(2)} (${p.forma})</span></li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="border rounded-lg p-4">
+                                <h4 class="font-bold text-red-800 text-xs mb-3 uppercase flex justify-between">
+                                    <span>Pendentes (${pends.length})</span>
+                                    <span>Total: R$ ${totalPendente.toFixed(2)}</span>
+                                </h4>
+                                <ul class="text-xs space-y-2">
+                                    ${pends.map(p => `<li class="flex justify-between border-b pb-1"><span>• ${p.nome}</span><span class="text-slate-500">${p.telefone ? 'Tel: ' + p.telefone : ''}</span></li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (tipo === 'extrato') {
+                let options = membros.map((m, i) => `<option value="${i}">${m.nome}</option>`).join('');
+                c.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center no-print">
+                            <h3 class="font-bold text-lg text-slate-800">Extrato Anual com Valores por Membro</h3>
+                            <button onclick="window.print()" class="bg-[#6e473b] text-white px-4 py-2 rounded-lg text-sm font-semibold">
+                                🖨️ Imprimir Extrato
+                            </button>
+                        </div>
+                        <div class="no-print">
+                            <select id="selExtratoMembro" onchange="renderExtratoTarget(this.value)" class="border border-slate-300 rounded-lg p-2 text-sm max-w-md w-full">
+                                ${options}
+                            </select>
+                        </div>
+                        <div id="extratoTarget"></div>
+                    </div>
+                `;
+                renderExtratoTarget(0);
+                        } else if (tipo === 'fechamento_mes') {
+                renderRelatorioFechamentoMes();
+            } else if (tipo === 'fechamento_ano') {
+                renderRelatorioFechamentoAno();
+            } else if (tipo === 'definitivas' || tipo === 'temporarias' || tipo === 'admissao' || tipo === 'iniciantes') {
+                renderRelatorioVocacional(tipo);
+            }
+            lucide.createIcons();
+        }
+
+        function renderRelatorioVocacional(tipo) {
+            const c = document.getElementById('relatorioContainer');
+            const membros = getMembros();
+            let lista = [];
+            let titulo = "";
+            let subtitulo = "";
+            let colDataNome = "";
+            let colDataProp = "";
+            let colFreiProp = "";
+            let badgeBg = "";
+
+            if (tipo === 'definitivas') {
+                lista = membros.filter(m => m.data_promessas_definitivas && m.data_promessas_definitivas.trim() !== '');
+                titulo = "Relatório de Membros com Promessas Definitivas";
+                subtitulo = "Membros que já emitiram suas Promessas Definitivas no Carmelo Secular";
+                colDataNome = "Data Promessa Definitiva";
+                colDataProp = "data_promessas_definitivas";
+                colFreiProp = "frei_promessas_def";
+                badgeBg = "bg-amber-100 text-amber-900";
+            } else if (tipo === 'temporarias') {
+                lista = membros.filter(m => m.data_promessas_temporarias && m.data_promessas_temporarias.trim() !== '' && (!m.data_promessas_definitivas || m.data_promessas_definitivas.trim() === ''));
+                titulo = "Relatório de Membros com Promessas Temporárias";
+                subtitulo = "Membros em período de formação com Promessas Temporárias vigentes";
+                colDataNome = "Data Promessa Temporária";
+                colDataProp = "data_promessas_temporarias";
+                colFreiProp = "frei_promessas_temp";
+                badgeBg = "bg-blue-100 text-blue-900";
+            } else if (tipo === 'admissao') {
+                lista = membros.filter(m => m.data_admissao && m.data_admissao.trim() !== '' && (!m.data_promessas_temporarias || m.data_promessas_temporarias.trim() === ''));
+                titulo = "Relatório de Membros Admitidos à Formação";
+                subtitulo = "Membros que já receberam o rito de Admissão na OCDS";
+                colDataNome = "Data de Admissão";
+                colDataProp = "data_admissao";
+                colFreiProp = "frei_admissao";
+                badgeBg = "bg-emerald-100 text-emerald-900";
+            } else if (tipo === 'iniciantes') {
+                lista = membros.filter(m => (!m.data_admissao || m.data_admissao.trim() === '') && (!m.data_promessas_temporarias || m.data_promessas_temporarias.trim() === '') && (!m.data_promessas_definitivas || m.data_promessas_definitivas.trim() === ''));
+                titulo = "Relatório de Membros Iniciantes (Sem Admissão)";
+                subtitulo = "Membros em período de contato inicial / discernimento vocacional pré-admissão";
+                colDataNome = "Data Entrada OCDS";
+                colDataProp = "data_entrada_ocds";
+                colFreiProp = "";
+                badgeBg = "bg-purple-100 text-purple-900";
+            }
+
+            c.innerHTML = `
+                <div class="space-y-4 container-print">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b pb-4 gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 flex items-center justify-center bg-amber-50 rounded-xl">
+                                <img src="brasao.png" onerror="this.onerror=null; this.src='brasao.jpg';" alt="Brasão" class="h-10 w-auto max-h-10 object-contain">
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-base sm:text-lg text-[#6e473b] uppercase tracking-wide leading-tight">${titulo}</h3>
+                                <p class="text-xs text-slate-500 font-medium">Comunidade Alegria da Sagrada Face — Regional São João da Cruz</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5">${subtitulo}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 no-print self-end sm:self-auto">
+                            <span class="text-xs font-bold px-3 py-1 rounded-full ${badgeBg}">${lista.length} membros</span>
+                            <button onclick="exportarExcelVocacional('${tipo}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Baixar Excel (.xlsx)
+                            </button>
+                            <button onclick="window.print()" class="bg-[#6e473b] hover:bg-[#4a2f26] text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                                <i data-lucide="printer" class="w-4 h-4"></i> Imprimir / PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                        <table class="w-full text-left text-xs" id="tabelaVocacional">
+                            <thead class="bg-slate-50 text-slate-700 font-bold uppercase border-b border-slate-200">
+                                <tr>
+                                    <th class="p-3">#</th>
+                                    <th class="p-3">Nome Completo</th>
+                                    <th class="p-3">Nome Religioso</th>
+                                    <th class="p-3">${colDataNome}</th>
+                                    ${colFreiProp ? '<th class="p-3">Celebrante (Frei/Padre)</th>' : ''}
+                                    <th class="p-3">Telefone / WhatsApp</th>
+                                    <th class="p-3">E-mail</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                ${lista.map((m, i) => `
+                                    <tr class="hover:bg-slate-50/80 transition">
+                                        <td class="p-3 text-slate-400 font-medium">${i+1}</td>
+                                        <td class="p-3 font-semibold text-slate-900">${m.nome}</td>
+                                        <td class="p-3 italic text-[#6e473b]">${m.nome_religioso || '—'}</td>
+                                        <td class="p-3 font-bold text-slate-800">${m[colDataProp] || '—'}</td>
+                                        ${colFreiProp ? `<td class="p-3 text-slate-600">${m[colFreiProp] || '—'}</td>` : ''}
+                                        <td class="p-3 text-slate-600">${m.telefone || '—'}</td>
+                                        <td class="p-3 text-slate-500">${m.email || '—'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="flex justify-between items-center text-[11px] text-slate-400 pt-2 border-t">
+                        <span>Total listado: <strong>${lista.length} membros</strong></span>
+                        <span>Sincronizado na Nuvem Supabase — Comunidade Alegria da Sagrada Face</span>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        
+        // ==========================================
+        // 📑 RELATÓRIOS DE FECHAMENTO (MÊS E ANO)
+        // ==========================================
+        function renderRelatorioFechamentoMes() {
+            const c = document.getElementById('relatorioContainer');
+            const mesesNomes = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            
+            c.innerHTML = `
+                <div class="space-y-4 container-print">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 gap-3 no-print">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                                <i data-lucide="calculator" class="w-5 h-5 text-emerald-600"></i> Fechamento do Mês (Balancete Contábil)
+                            </h3>
+                            <p class="text-xs text-slate-500">Prestação de contas mensal oficial da Comunidade Alegria da Sagrada Face</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <select id="repMesFechamento" onchange="atualizarViewFechamentoMes()" class="border border-slate-300 rounded-lg p-1.5 text-xs font-semibold bg-white">
+                                <option value="1">Janeiro</option><option value="2">Fevereiro</option>
+                                <option value="3">Março</option><option value="4">Abril</option>
+                                <option value="5">Maio</option><option value="6">Junho</option>
+                                <option value="7">Julho</option><option value="8">Agosto</option>
+                                <option value="9" selected>Setembro</option><option value="10">Outubro</option>
+                                <option value="11">Novembro</option><option value="12">Dezembro</option>
+                            </select>
+                            <select id="repAnoFechamento" onchange="atualizarViewFechamentoMes()" class="border border-slate-300 rounded-lg p-1.5 text-xs font-semibold bg-white">
+                                <option value="2024">2024</option><option value="2025">2025</option>
+                                <option value="2026" selected>2026</option><option value="2027">2027</option>
+                            </select>
+                            <button onclick="exportarExcelFechamentoMes()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Baixar Excel (.xlsx)
+                            </button>
+                            <button onclick="window.print()" class="bg-[#6e473b] hover:bg-[#4a2f26] text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                                <i data-lucide="printer" class="w-4 h-4"></i> Imprimir / PDF
+                            </button>
+                        </div>
+                    </div>
+                    <div id="targetFechamentoMes"></div>
+                </div>
+            `;
+            atualizarViewFechamentoMes();
+            lucide.createIcons();
+        }
+
+        function atualizarViewFechamentoMes() {
+            const mesNum = parseInt(document.getElementById('repMesFechamento').value);
+            const anoNum = parseInt(document.getElementById('repAnoFechamento').value);
+            const mesesNomes = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            
+            const movs = getMovimentacoes();
+            const dataInicio = `${anoNum}-${String(mesNum).padStart(2, '0')}-01`;
+            const ultimoDia = new Date(anoNum, mesNum, 0).getDate();
+            const dataFim = `${anoNum}-${String(mesNum).padStart(2, '0')}-${String(ultimoDia).padStart(2, '0')}`;
+
+            // Saldo Anterior
+            let saldoAnterior = 0;
+            movs.forEach(m => {
+                if (m.data < dataInicio) saldoAnterior += (Number(m.credito) || 0) - (Number(m.debito) || 0);
+            });
+
+            // Movimentações do Mês
+            const doMes = movs.filter(m => m.data >= dataInicio && m.data <= dataFim).sort((a,b) => new Date(a.data) - new Date(b.data));
+
+            let totalEntradas = 0;
+            let totalSaidas = 0;
+            doMes.forEach(m => {
+                totalEntradas += Number(m.credito) || 0;
+                totalSaidas += Number(m.debito) || 0;
+            });
+
+            const saldoFinal = saldoAnterior + totalEntradas - totalSaidas;
+            const resultadoMes = totalEntradas - totalSaidas;
+
+            document.getElementById('targetFechamentoMes').innerHTML = `
+                <div class="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-xl border border-slate-200">
+                    <!-- Cabeçalho Oficial -->
+                    <div class="flex items-center justify-between border-b pb-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="h-16 w-14 flex items-center justify-center shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 200" class="h-full w-auto max-h-full object-contain inline-block" style="filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2));">
+  <defs>
+    <linearGradient id="carmelGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCE082" />
+      <stop offset="40%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#9A7B1C" />
+    </linearGradient>
+    <linearGradient id="carmelBrown" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7D5141" />
+      <stop offset="100%" stop-color="#4A2F26" />
+    </linearGradient>
+    <linearGradient id="carmelWhite" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F5EFE6" />
+    </linearGradient>
+    <linearGradient id="bladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#CBD5E1" />
+      <stop offset="100%" stop-color="#94A3B8" />
+    </linearGradient>
+    <linearGradient id="flameGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EF4444" />
+      <stop offset="50%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#FDE047" />
+    </linearGradient>
+  </defs>
+
+  <!-- 12 ESTRELAS DA COROA EM ARCO -->
+  <g fill="url(#carmelGold)" stroke="#B45309" stroke-width="0.3">
+    <polygon points="25,32 26.5,35 30,35 27,37 28.5,40 25,38 21.5,40 23,37 20,35 23.5,35" />
+    <polygon points="36,23 37.5,26 41,26 38,28 39.5,31 36,29 32.5,31 34,28 31,26 34.5,26" />
+    <polygon points="49,16 50.5,19 54,19 51,21 52.5,24 49,22 45.5,24 47,21 44,19 47.5,19" />
+    <polygon points="63,11 64.5,14 68,14 65,16 66.5,19 63,17 59.5,19 61,16 58,14 61.5,14" />
+    <polygon points="78,9 79.5,12 83,12 80,14 81.5,17 78,15 74.5,17 76,14 73,12 76.5,12" />
+    <polygon points="93,9 94.5,12 98,12 95,14 96.5,17 93,15 89.5,17 91,14 88,12 91.5,12" />
+    <polygon points="107,11 108.5,14 112,14 109,16 110.5,19 107,17 103.5,19 105,16 102,14 105.5,14" />
+    <polygon points="121,16 122.5,19 126,19 123,21 124.5,24 121,22 117.5,24 119,21 116,19 119.5,19" />
+    <polygon points="134,23 135.5,26 139,26 136,28 137.5,31 134,29 130.5,31 132,28 129,26 132.5,26" />
+    <polygon points="144,32 145.5,35 149,35 146,37 147.5,40 144,38 140.5,40 142,37 139,35 142.5,35" />
+  </g>
+
+  <!-- BRAÇO DE ELIAS COM ESPADA FLAMEJANTE -->
+  <g id="bracoElias">
+    <path d="M72,38 Q65,30 55,25 Q50,22 45,28 Q43,32 50,34 Q60,37 72,42 Z" fill="url(#bladeGrad)" stroke="#475569" stroke-width="0.8"/>
+    <circle cx="48" cy="27" r="3.5" fill="#E2E8F0" stroke="#475569" stroke-width="0.7"/>
+    <rect x="45" y="24" width="7" height="2" rx="0.8" fill="url(#carmelGold)" stroke="#78350F" stroke-width="0.5"/>
+    <rect x="47.5" y="26" width="2" height="4" fill="url(#carmelGold)"/>
+    <circle cx="48.5" cy="30.5" r="1.2" fill="url(#carmelGold)"/>
+    <path d="M48,24 Q45,18 48,13 Q51,8 48,2 Q47,7 44,12 Q42,17 47,24 Z" fill="url(#bladeGrad)" stroke="#64748B" stroke-width="0.5"/>
+    <path d="M43,21 Q38,15 44,9 Q41,7 48,2 Q54,8 51,14 Q56,18 49,23 Q52,16 48,10 Q44,16 43,21 Z" fill="url(#flameGrad)" opacity="0.85"/>
+  </g>
+
+  <!-- COROA DUCAL DOURADA -->
+  <g id="coroaDucal">
+    <path d="M52,48 L108,48 L103,36 L94,42 L80,33 L66,42 L57,36 Z" fill="url(#carmelGold)" stroke="#78350F" stroke-width="0.8"/>
+    <rect x="52" y="45" width="56" height="5" rx="1.5" fill="url(#carmelGold)" stroke="#78350F" stroke-width="0.8"/>
+    <circle cx="58" cy="47.5" r="1.5" fill="#DC2626" />
+    <circle cx="66" cy="47.5" r="1.5" fill="#16A34A" />
+    <circle cx="80" cy="47.5" r="1.8" fill="#DC2626" />
+    <circle cx="94" cy="47.5" r="1.5" fill="#16A34A" />
+    <circle cx="102" cy="47.5" r="1.5" fill="#DC2626" />
+    <circle cx="57" cy="36" r="2" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.6"/>
+    <circle cx="80" cy="33" r="2.3" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.6"/>
+    <circle cx="103" cy="36" r="2" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.6"/>
+  </g>
+
+  <!-- ESCUDO HERALDICO DO CARMELO -->
+  <g id="escudoCarmelo">
+    <path d="M30,50 Q80,47 130,50 Q132,105 80,155 Q28,105 30,50 Z" fill="url(#carmelWhite)" stroke="url(#carmelGold)" stroke-width="3"/>
+    <path d="M33,52 Q80,49 127,52 Q129,103 80,151 Q31,103 33,52 Z" fill="none" stroke="#6E473B" stroke-width="1" opacity="0.6"/>
+
+    <!-- MONTE CARMELO -->
+    <path d="M31,104 Q60,100 70,82 Q76,73 80,73 Q84,73 90,82 Q100,100 129,104 Q116,135 80,153 Q44,135 31,104 Z" fill="url(#carmelBrown)" stroke="#3E2723" stroke-width="1.2"/>
+
+    <!-- CRUZ LATINA NO TOPO DO MONTE -->
+    <g id="cruzMonte" fill="url(#carmelBrown)" stroke="#3E2723" stroke-width="0.8">
+      <rect x="78" y="55" width="4" height="22" rx="0.5" />
+      <rect x="72" y="60" width="16" height="4" rx="0.5" />
+    </g>
+
+    <!-- TRÊS ESTRELAS DO CARMELO -->
+    <polygon points="80,106 82.5,113 89,113 83.5,117 86,123.5 80,119 74,123.5 76.5,117 71,113 77.5,113" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8" />
+    <circle cx="80" cy="116" r="1.2" fill="#D4AF37" />
+    <polygon points="52,65 54,70 59,70 55,73 57,78 52,75 47,78 49,73 45,70 50,70" fill="url(#carmelGold)" stroke="#B45309" stroke-width="0.7"/>
+    <polygon points="108,65 110,70 115,70 111,73 113,78 108,75 103,78 105,73 101,70 106,70" fill="url(#carmelGold)" stroke="#B45309" stroke-width="0.7"/>
+  </g>
+
+  <!-- LISTEL COM O LEMA SAGRADO -->
+  <g id="listelLema">
+    <path d="M15,165 Q45,158 80,165 Q115,158 145,165 L140,177 Q115,170 80,177 Q45,170 20,177 Z" fill="#FDFBF7" stroke="url(#carmelGold)" stroke-width="1.2"/>
+    <path d="M15,165 L20,177 L10,173 Z" fill="#E2D8CD" stroke="#9A7B1C" stroke-width="0.6"/>
+    <path d="M145,165 L140,177 L150,173 Z" fill="#E2D8CD" stroke="#9A7B1C" stroke-width="0.6"/>
+    <text x="80" y="173" font-family="'Times New Roman', Georgia, serif" font-size="6.5" font-weight="bold" fill="#4A2F26" text-anchor="middle" letter-spacing="0.4">
+      ZELO ZELATUS SUM PRO DOMINO
+    </text>
+    <rect x="68" y="181" width="24" height="8" rx="2" fill="url(#carmelBrown)" stroke="url(#carmelGold)" stroke-width="0.8"/>
+    <text x="80" y="187.5" font-family="sans-serif" font-size="5.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">
+      O.C.D.S.
+    </text>
+  </g>
+</svg>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-bold text-[#6e473b] uppercase tracking-wider">Comunidade Alegria da Sagrada Face</h2>
+                                <h4 class="text-xs font-semibold text-slate-500">Regional São João da Cruz — OCDS</h4>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="inline-block bg-amber-100 text-[#6e473b] font-bold text-xs px-3 py-1 rounded-full uppercase">Ficha Cadastral</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+                        <div><strong class="text-xs text-slate-500 uppercase block">Nome Completo</strong> <span class="font-bold text-slate-900">${m.nome}</span></div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">Nome Religioso</strong> <span class="italic text-[#6e473b]">${m.nome_religioso || '—'}</span></div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">Data de Nascimento</strong> ${m.data_nascimento || '—'}</div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">Status</strong> <span class="font-bold">${m.status}</span></div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">CPF / RG</strong> ${m.cpf || '—'} / ${m.rg || '—'}</div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">Estado Civil / Cônjuge</strong> ${m.estado_civil || '—'} ${m.conjuge ? '('+m.conjuge+')' : ''}</div>
+                        <div class="col-span-2"><strong class="text-xs text-slate-500 uppercase block">Endereço Residencial</strong> ${m.endereco || '—'}, ${m.bairro || ''} - ${m.cidade || ''}</div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">Telefone / WhatsApp</strong> ${m.telefone || '—'}</div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">E-mail</strong> ${m.email || '—'}</div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <h4 class="text-xs font-bold text-[#6e473b] uppercase mb-3 tracking-wide">Caminho Vocacional na Comunidade</h4>
+                        <table class="w-full text-xs border border-slate-200">
+                            <tr class="bg-slate-50 border-b"><td class="p-2 font-semibold">Entrada na OCDS</td><td class="p-2">${m.data_entrada_ocds || '—'}</td></tr>
+                            <tr class="border-b"><td class="p-2 font-semibold">Admissão à Formação</td><td class="p-2">${m.data_admissao || '—'} (${m.frei_admissao || '—'})</td></tr>
+                            <tr class="bg-slate-50 border-b"><td class="p-2 font-semibold">Promessas Temporárias</td><td class="p-2">${m.data_promessas_temporarias || '—'} (${m.frei_promessas_temp || '—'})</td></tr>
+                            <tr class="border-b"><td class="p-2 font-semibold">Promessas Definitivas</td><td class="p-2">${m.data_promessas_definitivas || '—'} (${m.frei_promessas_def || '—'})</td></tr>
+                            <tr class="bg-slate-50 border-b"><td class="p-2 font-semibold">Data Sanatio</td><td class="p-2">${m.data_sanatio || '—'}</td></tr>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderExtratoTarget(idx) {
+            const m = getMembros()[idx];
+            const mensalidades = getMensalidades();
+            if (!m) return;
+
+            const mesesNomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            let itemsHtml = '';
+            let totalPago = 0;
+            for (let i = 1; i <= 12; i++) {
+                const reg = mensalidades[m.nome]?.[2026]?.[i];
+                const isEm = m.status === 'Emérito' || m.status === 'Falecido(a)';
+                const st = reg ? (typeof reg === 'object' ? reg.status : reg) : (isEm ? 'Isento' : 'Pendente');
+                const val = (reg && typeof reg === 'object' && reg.valor !== undefined && reg.valor !== null) ? parseFloat(reg.valor) : 0.00;
+                
+                if (st === 'Pago') totalPago += val;
+                
+                let badgeClass = 'bg-red-100 text-red-800';
+                if (st === 'Pago') badgeClass = 'bg-emerald-100 text-emerald-800';
+                if (st === 'Isento') badgeClass = 'bg-slate-100 text-slate-600';
+
+                itemsHtml += `
+                    <div class="p-3 border rounded-lg flex flex-col justify-between text-xs">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold">${mesesNomes[i-1]} / 2026</span>
+                            <span class="font-bold px-2 py-0.5 rounded ${badgeClass}">${st}</span>
+                        </div>
+                        <span class="text-slate-600 font-semibold">R$ ${val.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+
+            document.getElementById('extratoTarget').innerHTML = `
+                <div class="p-6 border rounded-xl bg-slate-50/50 mt-4 container-print">
+                    <div class="flex justify-between items-center mb-4 border-b pb-3">
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-base">${m.nome}</h4>
+                            <p class="text-xs text-slate-500">${m.nome_religioso || '—'}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">Total Quitado: R$ ${totalPago.toFixed(2)}</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                        ${itemsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function exportarExcelMembros() {
+            const membros = getMembros();
+            const ws = XLSX.utils.json_to_sheet(membros);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Membros OCDS");
+            XLSX.writeFile(wb, "Membros_Alegria_Sagrada_Face.xlsx");
+        }
+
+        function exportarExcelBalancete() {
+            const membros = getMembros();
+            const mensalidades = getMensalidades();
+            const dados = [];
+            membros.forEach(m => {
+                const reg = mensalidades[m.nome]?.[2026]?.[9];
+                const isEm = m.status === 'Emérito' || m.status === 'Falecido(a)';
+                const st = reg ? (typeof reg === 'object' ? reg.status : reg) : (isEm ? 'Isento' : 'Pendente');
+                const val = (reg && typeof reg === 'object' && reg.valor !== undefined && reg.valor !== null) ? parseFloat(reg.valor) : 0.00;
+                dados.push({
+                    Membro: m.nome,
+                    Status_Membro: m.status,
+                    Telefone: m.telefone,
+                    Mes: 'Setembro/2026',
+                    Valor: val,
+                    Situacao: st,
+                    Forma: (reg && reg.forma) || 'PIX'
+                });
+            });
+            const ws = XLSX.utils.json_to_sheet(dados);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Balancete Setembro 2026");
+            XLSX.writeFile(wb, "Balancete_Setembro_2026.xlsx");
+        }
+
+        function exportarExcelVocacional(tipo) {
+            const membros = getMembros();
+            let lista = [];
+            let nomeArquivo = "";
+
+            if (tipo === 'definitivas') {
+                lista = membros.filter(m => m.data_promessas_definitivas && m.data_promessas_definitivas.trim() !== '').map(m => ({
+                    Nome: m.nome,
+                    Nome_Religioso: m.nome_religioso,
+                    Data_Promessa_Definitiva: m.data_promessas_definitivas,
+                    Celebrante: m.frei_promessas_def,
+                    Entrada_OCDS: m.data_entrada_ocds,
+                    Telefone: m.telefone,
+                    Email: m.email
+                }));
+                nomeArquivo = "OCDS_Promessas_Definitivas.xlsx";
+            } else if (tipo === 'temporarias') {
+                lista = membros.filter(m => m.data_promessas_temporarias && m.data_promessas_temporarias.trim() !== '' && (!m.data_promessas_definitivas || m.data_promessas_definitivas.trim() === '')).map(m => ({
+                    Nome: m.nome,
+                    Nome_Religioso: m.nome_religioso,
+                    Data_Promessa_Temporaria: m.data_promessas_temporarias,
+                    Celebrante: m.frei_promessas_temp,
+                    Admissao: m.data_admissao,
+                    Telefone: m.telefone,
+                    Email: m.email
+                }));
+                nomeArquivo = "OCDS_Promessas_Temporarias.xlsx";
+            } else if (tipo === 'admissao') {
+                lista = membros.filter(m => m.data_admissao && m.data_admissao.trim() !== '' && (!m.data_promessas_temporarias || m.data_promessas_temporarias.trim() === '')).map(m => ({
+                    Nome: m.nome,
+                    Nome_Religioso: m.nome_religioso,
+                    Data_Admissao: m.data_admissao,
+                    Celebrante: m.frei_admissao,
+                    Entrada_OCDS: m.data_entrada_ocds,
+                    Telefone: m.telefone,
+                    Email: m.email
+                }));
+                nomeArquivo = "OCDS_Admissao_Formacao.xlsx";
+            } else if (tipo === 'iniciantes') {
+                lista = membros.filter(m => (!m.data_admissao || m.data_admissao.trim() === '') && (!m.data_promessas_temporarias || m.data_promessas_temporarias.trim() === '') && (!m.data_promessas_definitivas || m.data_promessas_definitivas.trim() === '')).map(m => ({
+                    Nome: m.nome,
+                    Nome_Religioso: m.nome_religioso,
+                    Data_Entrada_OCDS: m.data_entrada_ocds,
+                    Status: m.status,
+                    Telefone: m.telefone,
+                    Email: m.email
+                }));
+                nomeArquivo = "OCDS_Iniciantes_Sem_Admissao.xlsx";
+            }
+
+            const ws = XLSX.utils.json_to_sheet(lista);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Membros");
+            XLSX.writeFile(wb, nomeArquivo);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function verFichaMembro(idx) {
+            openRelatorioModal('ficha');
+            document.getElementById('selFichaMembro').value = idx;
+            renderFichaRelatorio(idx);
+            switchTab('relatorios');
+        }
+
+        // Inicialização
+        sincronizarComNuvem();
+        lucide.createIcons();
+    </script>
+    <!-- MODAL NOVA MOVIMENTAÇÃO FINANCEIRA -->
+    <div id="modalMovimentacao" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 border-t-8 border-[#6e473b] my-auto">
+            <div class="flex justify-between items-center mb-4 border-b pb-3">
+                <h3 class="font-bold text-base text-slate-800 flex items-center gap-2" id="modalMovTitle">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-[#6e473b]"></i> Lançar Movimentação Financeira
+                </h3>
+                <button onclick="closeModal('modalMovimentacao')" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <form onsubmit="handleSalvarMovimentacao(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="mov_id" value="">
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Dia / Data *</label>
+                        <input type="date" id="mov_data" class="w-full p-2 border rounded-lg text-sm bg-white" required>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Tipo de Movimentação *</label>
+                        <select id="mov_tipo" class="w-full p-2 border rounded-lg text-sm font-bold bg-white" onchange="ajustarEstiloTipoMov()">
+                            <option value="credito" class="text-emerald-700 font-bold">🟢 Crédito / Entrada (+)</option>
+                            <option value="debito" class="text-red-700 font-bold">🔴 Débito / Saída (-)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Descrição da Movimentação *</label>
+                    <input type="text" id="mov_descricao" placeholder="Ex: Mensalidades Setembro, Compra de velas, Taxa Regional..." class="w-full p-2.5 border rounded-lg text-sm" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Valor (R$) *</label>
+                        <input type="number" step="0.01" min="0.01" id="mov_valor" placeholder="0,00" class="w-full p-2.5 border rounded-lg text-sm font-bold text-slate-900" required>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Forma de Pagamento</label>
+                        <select id="mov_forma" class="w-full p-2.5 border rounded-lg text-sm bg-white">
+                            <option value="PIX">PIX</option>
+                            <option value="Dinheiro">Dinheiro</option>
+                            <option value="Transferência Bancária">Transferência Bancária</option>
+                            <option value="Boleto">Boleto</option>
+                            <option value="Cartão">Cartão</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Categoria Contábil</label>
+                    <select id="mov_categoria" class="w-full p-2 border rounded-lg text-sm bg-white">
+                        <option value="Mensalidades">Mensalidades Comunitárias</option>
+                        <option value="Doações / Ofertas">Doações / Ofertas Espontâneas</option>
+                        <option value="Taxas Regionais / Provinciais">Taxas Regionais / Provinciais</option>
+                        <option value="Material Litúrgico / Velas">Material Litúrgico / Velas / Livros</option>
+                        <option value="Confraternização / Retiros">Confraternização / Retiros</option>
+                        <option value="Despesas Administrativas">Despesas Administrativas</option>
+                        <option value="Outros">Outras Entradas / Saídas</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Observações Adicionais</label>
+                    <input type="text" id="mov_obs" placeholder="Ex: Comprovante arquivado na pasta" class="w-full p-2 border rounded-lg">
+                </div>
+
+                <div class="pt-3 border-t flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('modalMovimentacao')" class="px-4 py-2 border rounded-lg hover:bg-slate-100 font-medium">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 bg-[#6e473b] hover:bg-[#4a2f26] text-white font-semibold rounded-lg shadow-sm">Gravar Movimentação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
