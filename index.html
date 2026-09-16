@@ -2736,33 +2736,55 @@
             const saldoFinal = saldoAnterior + totalEntradas - totalSaidas;
             const resultadoMes = totalEntradas - totalSaidas;
 
+            let saldoLinha = saldoAnterior;
+            const linhasFechamentoHtml = doMes.length > 0 ? doMes.map(mv => {
+                const cred = Number(mv.credito) || 0;
+                const deb = Number(mv.debito) || 0;
+                saldoLinha = saldoLinha + cred - deb;
+                const [anoP, mesP, diaP] = mv.data.split('-');
+                const dataFormatada = diaP ? `${diaP}/${mesP}/${anoP}` : mv.data;
+                const credTxt = cred > 0 ? `<span class="font-bold text-emerald-700">+R$ ${cred.toFixed(2)}</span>` : '<span class="text-slate-300">—</span>';
+                const debTxt = deb > 0 ? `<span class="font-bold text-red-700">-R$ ${deb.toFixed(2)}</span>` : '<span class="text-slate-300">—</span>';
+                return `
+                    <tr class="border-b border-slate-100">
+                        <td class="py-2 px-3 whitespace-nowrap text-slate-700">${dataFormatada}</td>
+                        <td class="py-2 px-3 text-slate-900">${mv.descricao || '—'}</td>
+                        <td class="py-2 px-3 text-slate-500">${mv.categoria || 'Geral'}</td>
+                        <td class="py-2 px-3 text-slate-500">${mv.forma_pagamento || '—'}</td>
+                        <td class="py-2 px-3 text-right">${credTxt}</td>
+                        <td class="py-2 px-3 text-right">${debTxt}</td>
+                        <td class="py-2 px-3 text-right font-semibold text-slate-800">R$ ${saldoLinha.toFixed(2)}</td>
+                    </tr>
+                `;
+            }).join('') : `<tr><td colspan="7" class="text-center py-6 text-slate-400">Nenhuma movimentação registrada neste mês.</td></tr>`;
+
             document.getElementById('targetFechamentoMes').innerHTML = `
-                <div class="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-xl border border-slate-200">
+                <div class="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-xl border border-slate-200 container-print">
                     <!-- Cabeçalho Oficial -->
                     <div class="flex items-center justify-between border-b pb-4 mb-6">
                         <div class="flex items-center gap-3">
                             <div class="h-16 w-14 flex items-center justify-center shrink-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 200" class="h-full w-auto max-h-full object-contain inline-block" style="filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2));">
   <defs>
-    <linearGradient id="carmelGold" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="carmelGoldFechB" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#FCE082" />
       <stop offset="40%" stop-color="#D4AF37" />
       <stop offset="100%" stop-color="#9A7B1C" />
     </linearGradient>
-    <linearGradient id="carmelBrown" x1="0%" y1="0%" x2="0%" y2="100%">
+    <linearGradient id="carmelBrownFechB" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#7D5141" />
       <stop offset="100%" stop-color="#4A2F26" />
     </linearGradient>
-    <linearGradient id="carmelWhite" x1="0%" y1="0%" x2="0%" y2="100%">
+    <linearGradient id="carmelWhiteFechB" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#FFFFFF" />
       <stop offset="100%" stop-color="#F5EFE6" />
     </linearGradient>
-    <linearGradient id="bladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="bladeGradFechB" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#FFFFFF" />
       <stop offset="50%" stop-color="#CBD5E1" />
       <stop offset="100%" stop-color="#94A3B8" />
     </linearGradient>
-    <linearGradient id="flameGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+    <linearGradient id="flameGradFechB" x1="0%" y1="100%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#EF4444" />
       <stop offset="50%" stop-color="#F97316" />
       <stop offset="100%" stop-color="#FDE047" />
@@ -2770,7 +2792,7 @@
   </defs>
 
   <!-- 12 ESTRELAS DA COROA EM ARCO -->
-  <g fill="url(#carmelGold)" stroke="#B45309" stroke-width="0.3">
+  <g fill="url(#carmelGoldFechB)" stroke="#B45309" stroke-width="0.3">
     <polygon points="25,32 26.5,35 30,35 27,37 28.5,40 25,38 21.5,40 23,37 20,35 23.5,35" />
     <polygon points="36,23 37.5,26 41,26 38,28 39.5,31 36,29 32.5,31 34,28 31,26 34.5,26" />
     <polygon points="49,16 50.5,19 54,19 51,21 52.5,24 49,22 45.5,24 47,21 44,19 47.5,19" />
@@ -2784,20 +2806,20 @@
   </g>
 
   <!-- BRAÇO DE ELIAS COM ESPADA FLAMEJANTE -->
-  <g id="bracoElias">
-    <path d="M72,38 Q65,30 55,25 Q50,22 45,28 Q43,32 50,34 Q60,37 72,42 Z" fill="url(#bladeGrad)" stroke="#475569" stroke-width="0.8"/>
+  <g id="bracoEliasFechB">
+    <path d="M72,38 Q65,30 55,25 Q50,22 45,28 Q43,32 50,34 Q60,37 72,42 Z" fill="url(#bladeGradFechB)" stroke="#475569" stroke-width="0.8"/>
     <circle cx="48" cy="27" r="3.5" fill="#E2E8F0" stroke="#475569" stroke-width="0.7"/>
-    <rect x="45" y="24" width="7" height="2" rx="0.8" fill="url(#carmelGold)" stroke="#78350F" stroke-width="0.5"/>
-    <rect x="47.5" y="26" width="2" height="4" fill="url(#carmelGold)"/>
-    <circle cx="48.5" cy="30.5" r="1.2" fill="url(#carmelGold)"/>
-    <path d="M48,24 Q45,18 48,13 Q51,8 48,2 Q47,7 44,12 Q42,17 47,24 Z" fill="url(#bladeGrad)" stroke="#64748B" stroke-width="0.5"/>
-    <path d="M43,21 Q38,15 44,9 Q41,7 48,2 Q54,8 51,14 Q56,18 49,23 Q52,16 48,10 Q44,16 43,21 Z" fill="url(#flameGrad)" opacity="0.85"/>
+    <rect x="45" y="24" width="7" height="2" rx="0.8" fill="url(#carmelGoldFechB)" stroke="#78350F" stroke-width="0.5"/>
+    <rect x="47.5" y="26" width="2" height="4" fill="url(#carmelGoldFechB)"/>
+    <circle cx="48.5" cy="30.5" r="1.2" fill="url(#carmelGoldFechB)"/>
+    <path d="M48,24 Q45,18 48,13 Q51,8 48,2 Q47,7 44,12 Q42,17 47,24 Z" fill="url(#bladeGradFechB)" stroke="#64748B" stroke-width="0.5"/>
+    <path d="M43,21 Q38,15 44,9 Q41,7 48,2 Q54,8 51,14 Q56,18 49,23 Q52,16 48,10 Q44,16 43,21 Z" fill="url(#flameGradFechB)" opacity="0.85"/>
   </g>
 
   <!-- COROA DUCAL DOURADA -->
-  <g id="coroaDucal">
-    <path d="M52,48 L108,48 L103,36 L94,42 L80,33 L66,42 L57,36 Z" fill="url(#carmelGold)" stroke="#78350F" stroke-width="0.8"/>
-    <rect x="52" y="45" width="56" height="5" rx="1.5" fill="url(#carmelGold)" stroke="#78350F" stroke-width="0.8"/>
+  <g id="coroaDucalFechB">
+    <path d="M52,48 L108,48 L103,36 L94,42 L80,33 L66,42 L57,36 Z" fill="url(#carmelGoldFechB)" stroke="#78350F" stroke-width="0.8"/>
+    <rect x="52" y="45" width="56" height="5" rx="1.5" fill="url(#carmelGoldFechB)" stroke="#78350F" stroke-width="0.8"/>
     <circle cx="58" cy="47.5" r="1.5" fill="#DC2626" />
     <circle cx="66" cy="47.5" r="1.5" fill="#16A34A" />
     <circle cx="80" cy="47.5" r="1.8" fill="#DC2626" />
@@ -2809,15 +2831,15 @@
   </g>
 
   <!-- ESCUDO HERALDICO DO CARMELO -->
-  <g id="escudoCarmelo">
-    <path d="M30,50 Q80,47 130,50 Q132,105 80,155 Q28,105 30,50 Z" fill="url(#carmelWhite)" stroke="url(#carmelGold)" stroke-width="3"/>
+  <g id="escudoCarmeloFechB">
+    <path d="M30,50 Q80,47 130,50 Q132,105 80,155 Q28,105 30,50 Z" fill="url(#carmelWhiteFechB)" stroke="url(#carmelGoldFechB)" stroke-width="3"/>
     <path d="M33,52 Q80,49 127,52 Q129,103 80,151 Q31,103 33,52 Z" fill="none" stroke="#6E473B" stroke-width="1" opacity="0.6"/>
 
     <!-- MONTE CARMELO -->
-    <path d="M31,104 Q60,100 70,82 Q76,73 80,73 Q84,73 90,82 Q100,100 129,104 Q116,135 80,153 Q44,135 31,104 Z" fill="url(#carmelBrown)" stroke="#3E2723" stroke-width="1.2"/>
+    <path d="M31,104 Q60,100 70,82 Q76,73 80,73 Q84,73 90,82 Q100,100 129,104 Q116,135 80,153 Q44,135 31,104 Z" fill="url(#carmelBrownFechB)" stroke="#3E2723" stroke-width="1.2"/>
 
     <!-- CRUZ LATINA NO TOPO DO MONTE -->
-    <g id="cruzMonte" fill="url(#carmelBrown)" stroke="#3E2723" stroke-width="0.8">
+    <g id="cruzMonteFechB" fill="url(#carmelBrownFechB)" stroke="#3E2723" stroke-width="0.8">
       <rect x="78" y="55" width="4" height="22" rx="0.5" />
       <rect x="72" y="60" width="16" height="4" rx="0.5" />
     </g>
@@ -2825,19 +2847,19 @@
     <!-- TRÊS ESTRELAS DO CARMELO -->
     <polygon points="80,106 82.5,113 89,113 83.5,117 86,123.5 80,119 74,123.5 76.5,117 71,113 77.5,113" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8" />
     <circle cx="80" cy="116" r="1.2" fill="#D4AF37" />
-    <polygon points="52,65 54,70 59,70 55,73 57,78 52,75 47,78 49,73 45,70 50,70" fill="url(#carmelGold)" stroke="#B45309" stroke-width="0.7"/>
-    <polygon points="108,65 110,70 115,70 111,73 113,78 108,75 103,78 105,73 101,70 106,70" fill="url(#carmelGold)" stroke="#B45309" stroke-width="0.7"/>
+    <polygon points="52,65 54,70 59,70 55,73 57,78 52,75 47,78 49,73 45,70 50,70" fill="url(#carmelGoldFechB)" stroke="#B45309" stroke-width="0.7"/>
+    <polygon points="108,65 110,70 115,70 111,73 113,78 108,75 103,78 105,73 101,70 106,70" fill="url(#carmelGoldFechB)" stroke="#B45309" stroke-width="0.7"/>
   </g>
 
   <!-- LISTEL COM O LEMA SAGRADO -->
-  <g id="listelLema">
-    <path d="M15,165 Q45,158 80,165 Q115,158 145,165 L140,177 Q115,170 80,177 Q45,170 20,177 Z" fill="#FDFBF7" stroke="url(#carmelGold)" stroke-width="1.2"/>
+  <g id="listelLemaFechB">
+    <path d="M15,165 Q45,158 80,165 Q115,158 145,165 L140,177 Q115,170 80,177 Q45,170 20,177 Z" fill="#FDFBF7" stroke="url(#carmelGoldFechB)" stroke-width="1.2"/>
     <path d="M15,165 L20,177 L10,173 Z" fill="#E2D8CD" stroke="#9A7B1C" stroke-width="0.6"/>
     <path d="M145,165 L140,177 L150,173 Z" fill="#E2D8CD" stroke="#9A7B1C" stroke-width="0.6"/>
     <text x="80" y="173" font-family="'Times New Roman', Georgia, serif" font-size="6.5" font-weight="bold" fill="#4A2F26" text-anchor="middle" letter-spacing="0.4">
       ZELO ZELATUS SUM PRO DOMINO
     </text>
-    <rect x="68" y="181" width="24" height="8" rx="2" fill="url(#carmelBrown)" stroke="url(#carmelGold)" stroke-width="0.8"/>
+    <rect x="68" y="181" width="24" height="8" rx="2" fill="url(#carmelBrownFechB)" stroke="url(#carmelGoldFechB)" stroke-width="0.8"/>
     <text x="80" y="187.5" font-family="sans-serif" font-size="5.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">
       O.C.D.S.
     </text>
@@ -2850,32 +2872,118 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="inline-block bg-amber-100 text-[#6e473b] font-bold text-xs px-3 py-1 rounded-full uppercase">Ficha Cadastral</div>
+                            <div class="inline-block bg-amber-100 text-[#6e473b] font-bold text-xs px-3 py-1 rounded-full uppercase">Balancete Mensal</div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4 text-sm mb-6">
-                        <div><strong class="text-xs text-slate-500 uppercase block">Nome Completo</strong> <span class="font-bold text-slate-900">${m.nome}</span></div>
-                        <div><strong class="text-xs text-slate-500 uppercase block">Nome Religioso</strong> <span class="italic text-[#6e473b]">${m.nome_religioso || '—'}</span></div>
-                        <div><strong class="text-xs text-slate-500 uppercase block">Data de Nascimento</strong> ${m.data_nascimento || '—'}</div>
-                        <div><strong class="text-xs text-slate-500 uppercase block">Status</strong> <span class="font-bold">${m.status}</span></div>
-                        <div><strong class="text-xs text-slate-500 uppercase block">CPF / RG</strong> ${m.cpf || '—'} / ${m.rg || '—'}</div>
-                        <div><strong class="text-xs text-slate-500 uppercase block">Estado Civil / Cônjuge</strong> ${m.estado_civil || '—'} ${m.conjuge ? '('+m.conjuge+')' : ''}</div>
-                        <div class="col-span-2"><strong class="text-xs text-slate-500 uppercase block">Endereço Residencial</strong> ${m.endereco || '—'}, ${m.bairro || ''} - ${m.cidade || ''}</div>
-                        <div><strong class="text-xs text-slate-500 uppercase block">Telefone / WhatsApp</strong> ${m.telefone || '—'}</div>
-                        <div><strong class="text-xs text-slate-500 uppercase block">E-mail</strong> ${m.email || '—'}</div>
+
+                    <h3 class="text-center font-bold text-[#6e473b] text-sm uppercase tracking-wide mb-6">Fechamento de ${mesesNomes[mesNum]} / ${anoNum}</h3>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6 text-center">
+                        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                            <p class="text-[10px] font-bold text-slate-500 uppercase">Saldo Anterior</p>
+                            <p class="text-sm font-bold text-slate-800">R$ ${saldoAnterior.toFixed(2)}</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-emerald-50 border border-emerald-200">
+                            <p class="text-[10px] font-bold text-emerald-700 uppercase">Créditos</p>
+                            <p class="text-sm font-bold text-emerald-700">+R$ ${totalEntradas.toFixed(2)}</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-red-50 border border-red-200">
+                            <p class="text-[10px] font-bold text-red-700 uppercase">Débitos</p>
+                            <p class="text-sm font-bold text-red-700">-R$ ${totalSaidas.toFixed(2)}</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-amber-50 border border-amber-200">
+                            <p class="text-[10px] font-bold text-[#6e473b] uppercase">Saldo Final</p>
+                            <p class="text-sm font-bold text-[#6e473b]">R$ ${saldoFinal.toFixed(2)}</p>
+                        </div>
+                        <div class="p-3 rounded-lg border ${resultadoMes >= 0 ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}">
+                            <p class="text-[10px] font-bold uppercase ${resultadoMes >= 0 ? 'text-emerald-700' : 'text-red-700'}">Resultado do Mês</p>
+                            <p class="text-sm font-bold ${resultadoMes >= 0 ? 'text-emerald-700' : 'text-red-700'}">${resultadoMes >= 0 ? 'Superávit +R$ ' + resultadoMes.toFixed(2) : 'Déficit -R$ ' + Math.abs(resultadoMes).toFixed(2)}</p>
+                        </div>
                     </div>
-                    <div class="border-t pt-4">
-                        <h4 class="text-xs font-bold text-[#6e473b] uppercase mb-3 tracking-wide">Caminho Vocacional na Comunidade</h4>
-                        <table class="w-full text-xs border border-slate-200">
-                            <tr class="bg-slate-50 border-b"><td class="p-2 font-semibold">Entrada na OCDS</td><td class="p-2">${m.data_entrada_ocds || '—'}</td></tr>
-                            <tr class="border-b"><td class="p-2 font-semibold">Admissão à Formação</td><td class="p-2">${m.data_admissao || '—'} (${m.frei_admissao || '—'})</td></tr>
-                            <tr class="bg-slate-50 border-b"><td class="p-2 font-semibold">Promessas Temporárias</td><td class="p-2">${m.data_promessas_temporarias || '—'} (${m.frei_promessas_temp || '—'})</td></tr>
-                            <tr class="border-b"><td class="p-2 font-semibold">Promessas Definitivas</td><td class="p-2">${m.data_promessas_definitivas || '—'} (${m.frei_promessas_def || '—'})</td></tr>
-                            <tr class="bg-slate-50 border-b"><td class="p-2 font-semibold">Data Sanatio</td><td class="p-2">${m.data_sanatio || '—'}</td></tr>
-                        </table>
+
+                    <table class="w-full text-xs border border-slate-200 mb-2">
+                        <thead class="bg-slate-100 text-slate-600 uppercase text-[10px] font-bold">
+                            <tr>
+                                <th class="py-2 px-3 text-left">Data</th>
+                                <th class="py-2 px-3 text-left">Descrição</th>
+                                <th class="py-2 px-3 text-left">Categoria</th>
+                                <th class="py-2 px-3 text-left">Forma</th>
+                                <th class="py-2 px-3 text-right">Crédito</th>
+                                <th class="py-2 px-3 text-right">Débito</th>
+                                <th class="py-2 px-3 text-right">Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody>${linhasFechamentoHtml}</tbody>
+                        <tfoot>
+                            <tr class="bg-amber-50 font-bold border-t-2 border-[#6e473b] text-slate-900">
+                                <td colspan="4" class="py-2.5 px-3 uppercase text-[#6e473b]">Total do Mês</td>
+                                <td class="py-2.5 px-3 text-right text-emerald-700">+R$ ${totalEntradas.toFixed(2)}</td>
+                                <td class="py-2.5 px-3 text-right text-red-700">-R$ ${totalSaidas.toFixed(2)}</td>
+                                <td class="py-2.5 px-3 text-right">R$ ${saldoFinal.toFixed(2)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <p class="text-[10px] text-slate-400 mb-8">${doMes.length} lançamento(s) no mês. Documento gerado em ${new Date().toLocaleDateString('pt-BR')}.</p>
+
+                    <div class="grid grid-cols-2 gap-10 mt-10 pt-2 text-center text-xs no-print-gap">
+                        <div>
+                            <div class="border-t border-slate-400 pt-2 mx-6">Ecônomo(a)</div>
+                        </div>
+                        <div>
+                            <div class="border-t border-slate-400 pt-2 mx-6">Ministro(a) / Responsável pela Fraternidade</div>
+                        </div>
                     </div>
                 </div>
             `;
+        }
+
+        function exportarExcelFechamentoMes() {
+            const mesNum = parseInt(document.getElementById('repMesFechamento').value);
+            const anoNum = parseInt(document.getElementById('repAnoFechamento').value);
+            const mesesNomes = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+            const movs = getMovimentacoes();
+            const dataInicio = `${anoNum}-${String(mesNum).padStart(2, '0')}-01`;
+            const ultimoDia = new Date(anoNum, mesNum, 0).getDate();
+            const dataFim = `${anoNum}-${String(mesNum).padStart(2, '0')}-${String(ultimoDia).padStart(2, '0')}`;
+
+            let saldoAnterior = 0;
+            movs.forEach(mv => {
+                if (mv.data < dataInicio) saldoAnterior += (Number(mv.credito) || 0) - (Number(mv.debito) || 0);
+            });
+
+            const doMes = movs.filter(mv => mv.data >= dataInicio && mv.data <= dataFim).sort((a, b) => new Date(a.data) - new Date(b.data));
+
+            let saldoLinha = saldoAnterior;
+            const linhas = [{
+                Data: '',
+                Descricao: 'SALDO ANTERIOR',
+                Categoria: '',
+                Forma: '',
+                Credito: '',
+                Debito: '',
+                Saldo: saldoAnterior.toFixed(2)
+            }];
+            doMes.forEach(mv => {
+                const cred = Number(mv.credito) || 0;
+                const deb = Number(mv.debito) || 0;
+                saldoLinha = saldoLinha + cred - deb;
+                const [anoP, mesP, diaP] = mv.data.split('-');
+                linhas.push({
+                    Data: diaP ? `${diaP}/${mesP}/${anoP}` : mv.data,
+                    Descricao: mv.descricao || '',
+                    Categoria: mv.categoria || 'Geral',
+                    Forma: mv.forma_pagamento || '',
+                    Credito: cred > 0 ? cred.toFixed(2) : '',
+                    Debito: deb > 0 ? deb.toFixed(2) : '',
+                    Saldo: saldoLinha.toFixed(2)
+                });
+            });
+
+            const ws = XLSX.utils.json_to_sheet(linhas);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, `Fechamento ${mesesNomes[mesNum]} ${anoNum}`);
+            XLSX.writeFile(wb, `OCDS_Fechamento_${mesesNomes[mesNum]}_${anoNum}.xlsx`);
         }
 
         function renderExtratoTarget(idx) {
@@ -3018,6 +3126,151 @@
 
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
+        }
+
+        function renderFichaRelatorio(idx) {
+            const m = getMembros()[idx];
+            if (!m) return;
+            document.getElementById('fichaTarget').innerHTML = `
+                <div class="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-xl border border-slate-200 container-print">
+                    <!-- Cabeçalho Oficial -->
+                    <div class="flex items-center justify-between border-b pb-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="h-16 w-14 flex items-center justify-center shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 200" class="h-full w-auto max-h-full object-contain inline-block" style="filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2));">
+  <defs>
+    <linearGradient id="carmelGoldFicha" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCE082" />
+      <stop offset="40%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#9A7B1C" />
+    </linearGradient>
+    <linearGradient id="carmelBrownFicha" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7D5141" />
+      <stop offset="100%" stop-color="#4A2F26" />
+    </linearGradient>
+    <linearGradient id="carmelWhiteFicha" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F5EFE6" />
+    </linearGradient>
+    <linearGradient id="bladeGradFicha" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#CBD5E1" />
+      <stop offset="100%" stop-color="#94A3B8" />
+    </linearGradient>
+    <linearGradient id="flameGradFicha" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EF4444" />
+      <stop offset="50%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#FDE047" />
+    </linearGradient>
+  </defs>
+
+  <!-- 12 ESTRELAS DA COROA EM ARCO -->
+  <g fill="url(#carmelGoldFicha)" stroke="#B45309" stroke-width="0.3">
+    <polygon points="25,32 26.5,35 30,35 27,37 28.5,40 25,38 21.5,40 23,37 20,35 23.5,35" />
+    <polygon points="36,23 37.5,26 41,26 38,28 39.5,31 36,29 32.5,31 34,28 31,26 34.5,26" />
+    <polygon points="49,16 50.5,19 54,19 51,21 52.5,24 49,22 45.5,24 47,21 44,19 47.5,19" />
+    <polygon points="63,11 64.5,14 68,14 65,16 66.5,19 63,17 59.5,19 61,16 58,14 61.5,14" />
+    <polygon points="78,9 79.5,12 83,12 80,14 81.5,17 78,15 74.5,17 76,14 73,12 76.5,12" />
+    <polygon points="93,9 94.5,12 98,12 95,14 96.5,17 93,15 89.5,17 91,14 88,12 91.5,12" />
+    <polygon points="107,11 108.5,14 112,14 109,16 110.5,19 107,17 103.5,19 105,16 102,14 105.5,14" />
+    <polygon points="121,16 122.5,19 126,19 123,21 124.5,24 121,22 117.5,24 119,21 116,19 119.5,19" />
+    <polygon points="134,23 135.5,26 139,26 136,28 137.5,31 134,29 130.5,31 132,28 129,26 132.5,26" />
+    <polygon points="144,32 145.5,35 149,35 146,37 147.5,40 144,38 140.5,40 142,37 139,35 142.5,35" />
+  </g>
+
+  <!-- BRAÇO DE ELIAS COM ESPADA FLAMEJANTE -->
+  <g id="bracoEliasFicha">
+    <path d="M72,38 Q65,30 55,25 Q50,22 45,28 Q43,32 50,34 Q60,37 72,42 Z" fill="url(#bladeGradFicha)" stroke="#475569" stroke-width="0.8"/>
+    <circle cx="48" cy="27" r="3.5" fill="#E2E8F0" stroke="#475569" stroke-width="0.7"/>
+    <rect x="45" y="24" width="7" height="2" rx="0.8" fill="url(#carmelGoldFicha)" stroke="#78350F" stroke-width="0.5"/>
+    <rect x="47.5" y="26" width="2" height="4" fill="url(#carmelGoldFicha)"/>
+    <circle cx="48.5" cy="30.5" r="1.2" fill="url(#carmelGoldFicha)"/>
+    <path d="M48,24 Q45,18 48,13 Q51,8 48,2 Q47,7 44,12 Q42,17 47,24 Z" fill="url(#bladeGradFicha)" stroke="#64748B" stroke-width="0.5"/>
+    <path d="M43,21 Q38,15 44,9 Q41,7 48,2 Q54,8 51,14 Q56,18 49,23 Q52,16 48,10 Q44,16 43,21 Z" fill="url(#flameGradFicha)" opacity="0.85"/>
+  </g>
+
+  <!-- COROA DUCAL DOURADA -->
+  <g id="coroaDucalFicha">
+    <path d="M52,48 L108,48 L103,36 L94,42 L80,33 L66,42 L57,36 Z" fill="url(#carmelGoldFicha)" stroke="#78350F" stroke-width="0.8"/>
+    <rect x="52" y="45" width="56" height="5" rx="1.5" fill="url(#carmelGoldFicha)" stroke="#78350F" stroke-width="0.8"/>
+    <circle cx="58" cy="47.5" r="1.5" fill="#DC2626" />
+    <circle cx="66" cy="47.5" r="1.5" fill="#16A34A" />
+    <circle cx="80" cy="47.5" r="1.8" fill="#DC2626" />
+    <circle cx="94" cy="47.5" r="1.5" fill="#16A34A" />
+    <circle cx="102" cy="47.5" r="1.5" fill="#DC2626" />
+    <circle cx="57" cy="36" r="2" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.6"/>
+    <circle cx="80" cy="33" r="2.3" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.6"/>
+    <circle cx="103" cy="36" r="2" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.6"/>
+  </g>
+
+  <!-- ESCUDO HERALDICO DO CARMELO -->
+  <g id="escudoCarmeloFicha">
+    <path d="M30,50 Q80,47 130,50 Q132,105 80,155 Q28,105 30,50 Z" fill="url(#carmelWhiteFicha)" stroke="url(#carmelGoldFicha)" stroke-width="3"/>
+    <path d="M33,52 Q80,49 127,52 Q129,103 80,151 Q31,103 33,52 Z" fill="none" stroke="#6E473B" stroke-width="1" opacity="0.6"/>
+
+    <!-- MONTE CARMELO -->
+    <path d="M31,104 Q60,100 70,82 Q76,73 80,73 Q84,73 90,82 Q100,100 129,104 Q116,135 80,153 Q44,135 31,104 Z" fill="url(#carmelBrownFicha)" stroke="#3E2723" stroke-width="1.2"/>
+
+    <!-- CRUZ LATINA NO TOPO DO MONTE -->
+    <g id="cruzMonteFicha" fill="url(#carmelBrownFicha)" stroke="#3E2723" stroke-width="0.8">
+      <rect x="78" y="55" width="4" height="22" rx="0.5" />
+      <rect x="72" y="60" width="16" height="4" rx="0.5" />
+    </g>
+
+    <!-- TRÊS ESTRELAS DO CARMELO -->
+    <polygon points="80,106 82.5,113 89,113 83.5,117 86,123.5 80,119 74,123.5 76.5,117 71,113 77.5,113" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8" />
+    <circle cx="80" cy="116" r="1.2" fill="#D4AF37" />
+    <polygon points="52,65 54,70 59,70 55,73 57,78 52,75 47,78 49,73 45,70 50,70" fill="url(#carmelGoldFicha)" stroke="#B45309" stroke-width="0.7"/>
+    <polygon points="108,65 110,70 115,70 111,73 113,78 108,75 103,78 105,73 101,70 106,70" fill="url(#carmelGoldFicha)" stroke="#B45309" stroke-width="0.7"/>
+  </g>
+
+  <!-- LISTEL COM O LEMA SAGRADO -->
+  <g id="listelLemaFicha">
+    <path d="M15,165 Q45,158 80,165 Q115,158 145,165 L140,177 Q115,170 80,177 Q45,170 20,177 Z" fill="#FDFBF7" stroke="url(#carmelGoldFicha)" stroke-width="1.2"/>
+    <path d="M15,165 L20,177 L10,173 Z" fill="#E2D8CD" stroke="#9A7B1C" stroke-width="0.6"/>
+    <path d="M145,165 L140,177 L150,173 Z" fill="#E2D8CD" stroke="#9A7B1C" stroke-width="0.6"/>
+    <text x="80" y="173" font-family="'Times New Roman', Georgia, serif" font-size="6.5" font-weight="bold" fill="#4A2F26" text-anchor="middle" letter-spacing="0.4">
+      ZELO ZELATUS SUM PRO DOMINO
+    </text>
+    <rect x="68" y="181" width="24" height="8" rx="2" fill="url(#carmelBrownFicha)" stroke="url(#carmelGoldFicha)" stroke-width="0.8"/>
+    <text x="80" y="187.5" font-family="sans-serif" font-size="5.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">
+      O.C.D.S.
+    </text>
+  </g>
+</svg>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-bold text-[#6e473b] uppercase tracking-wider">Comunidade Alegria da Sagrada Face</h2>
+                                <h4 class="text-xs font-semibold text-slate-500">Regional São João da Cruz — OCDS</h4>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="inline-block bg-amber-100 text-[#6e473b] font-bold text-xs px-3 py-1 rounded-full uppercase">Ficha Cadastral</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+                        <div><strong class="text-xs text-slate-500 uppercase block">Nome Completo</strong> <span class="font-bold text-slate-900">${m.nome}</span></div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">Nome Religioso</strong> <span class="italic text-[#6e473b]">${m.nome_religioso || '—'}</span></div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">Data de Nascimento</strong> ${m.data_nascimento || '—'}</div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">Status</strong> <span class="font-bold">${m.status}</span></div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">CPF / RG</strong> ${m.cpf || '—'} / ${m.rg || '—'}</div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">Estado Civil / Cônjuge</strong> ${m.estado_civil || '—'} ${m.conjuge ? '('+m.conjuge+')' : ''}</div>
+                        <div class="col-span-2"><strong class="text-xs text-slate-500 uppercase block">Endereço Residencial</strong> ${m.endereco || '—'}, ${m.bairro || ''} - ${m.cidade || ''}</div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">Telefone / WhatsApp</strong> ${m.telefone || '—'}</div>
+                        <div><strong class="text-xs text-slate-500 uppercase block">E-mail</strong> ${m.email || '—'}</div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <h4 class="text-xs font-bold text-[#6e473b] uppercase mb-3 tracking-wide">Caminho Vocacional na Comunidade</h4>
+                        <table class="w-full text-xs border border-slate-200">
+                            <tr class="bg-slate-50 border-b"><td class="p-2 font-semibold">Entrada na OCDS</td><td class="p-2">${m.data_entrada_ocds || '—'}</td></tr>
+                            <tr class="border-b"><td class="p-2 font-semibold">Admissão à Formação</td><td class="p-2">${m.data_admissao || '—'} (${m.frei_admissao || '—'})</td></tr>
+                            <tr class="bg-slate-50 border-b"><td class="p-2 font-semibold">Promessas Temporárias</td><td class="p-2">${m.data_promessas_temporarias || '—'} (${m.frei_promessas_temp || '—'})</td></tr>
+                            <tr class="border-b"><td class="p-2 font-semibold">Promessas Definitivas</td><td class="p-2">${m.data_promessas_definitivas || '—'} (${m.frei_promessas_def || '—'})</td></tr>
+                            <tr class="bg-slate-50 border-b"><td class="p-2 font-semibold">Data Sanatio</td><td class="p-2">${m.data_sanatio || '—'}</td></tr>
+                        </table>
+                    </div>
+                </div>
+            `;
         }
 
         function verFichaMembro(idx) {
