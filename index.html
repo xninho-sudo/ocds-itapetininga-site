@@ -3278,6 +3278,11 @@
             document.getElementById('selFichaMembro').value = idx;
             renderFichaRelatorio(idx);
             switchTab('relatorios');
+            // Rola até o card do relatório: ao vir da tabela de Membros, a ficha é
+            // desenhada abaixo dos atalhos de relatório e, sem isso, a tela não
+            // parece mudar (o usuário continua vendo só os cartões do topo).
+            const alvo = document.getElementById('relatorioContainer');
+            if (alvo) alvo.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         // Inicialização
