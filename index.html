@@ -256,7 +256,7 @@
                             <option value="2024">2024</option>
                             <option value="2025">2025</option>
                             <option value="2026" selected>2026</option>
-                            <option value="2027">2027</option>
+                            <option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option>
                         </select>
                     </div>
                     <button id="btnLoteMensalidade" onclick="openModalLote()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
@@ -313,7 +313,7 @@
                             <option value="2024">2024</option>
                             <option value="2025">2025</option>
                             <option value="2026" selected>2026</option>
-                            <option value="2027">2027</option>
+                            <option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option>
                         </select>
                     </div>
                     <div class="flex items-center gap-2">
@@ -838,6 +838,13 @@
 
     <!-- JAVASCRIPT LOGIC INTEGRADA COM SUPABASE -->
     <script>
+        const MESES_NOMES = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        const MES_ATUAL = new Date().getMonth() + 1;
+        const ANO_ATUAL = new Date().getFullYear();
+        document.addEventListener('DOMContentLoaded', () => {
+            ['selMesFinanceiro', 'lote_mes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = String(MES_ATUAL); });
+            ['selAnoMensalidade', 'selAnoFinanceiro'].forEach(id => { const el = document.getElementById(id); if (el) el.value = String(ANO_ATUAL); });
+        });
         // CONFIGURAÇÃO REAL DO SUPABASE
         const SUPABASE_URL = "https://lbzixpzqsmautkchricc.supabase.co";
         const SUPABASE_KEY = "sb_publishable_bhEUBkb78-nOrCwpE0TxSQ_kYnP0zug";
@@ -1143,7 +1150,7 @@
             let pagos = 0, pends = 0, arrecadado = 0.00;
             membros.forEach(m => {
                 if (m.status === 'Ativo') {
-                    const reg = mensalidades[m.nome]?.[2026]?.[9];
+                    const reg = mensalidades[m.nome]?.[ANO_ATUAL]?.[MES_ATUAL];
                     const st = reg ? (typeof reg === 'object' ? reg.status : reg) : 'Pendente';
                     
                     // CORREÇÃO: Valor numérico real - se for 0.00, soma 0.00 (NUNCA mais força 20!)
@@ -1162,25 +1169,36 @@
                 }
             });
 
+            document.getElementById('dashMesAnoLabel').innerText = `${MESES_NOMES[MES_ATUAL]} / ${ANO_ATUAL}`;
             document.getElementById('dashTotalArrecadado').innerText = `R$ ${arrecadado.toFixed(2)}`;
             document.getElementById('dashQtdPagos').innerText = pagos;
             document.getElementById('dashQtdPendentes').innerText = pends;
             const taxa = (pagos + pends > 0) ? ((pagos / (pagos + pends)) * 100).toFixed(1) : 0;
             document.getElementById('dashAdimplencia').innerText = `${taxa}%`;
 
-            // Aniversariantes de Setembro
+            // Aniversariantes do mês corrente (aceita AAAA-MM-DD, DD/MM/AAAA, DD.MM.AAAA)
             const listaAniv = document.getElementById('listaAniversariantes');
             listaAniv.innerHTML = '';
-            const mesSet = membros.filter(m => {
-                const dn = m.data_nascimento || '';
-                return dn.includes('-09-') || dn.includes('/09/') || dn.includes('.09.') || dn.includes('-9-');
-            });
+            const mesAtualAniv = new Date().getMonth() + 1;
+            const parseNasc = (str) => {
+                const t = String(str || '').trim();
+                let mm = t.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
+                if (mm) return { dia: +mm[3], mes: +mm[2] };
+                mm = t.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})/);
+                if (mm) return { dia: +mm[1], mes: +mm[2] };
+                return null;
+            };
+            const mesSet = membros
+                .map(m => ({ m, n: parseNasc(m.data_nascimento) }))
+                .filter(x => x.n && x.n.mes === mesAtualAniv && x.m.status !== 'Falecido(a)')
+                .sort((a, b) => a.n.dia - b.n.dia);
 
             document.getElementById('countAniversariantes').innerText = `${mesSet.length} no mês`;
             if (mesSet.length === 0) {
                 listaAniv.innerHTML = '<p class="text-xs text-slate-400">Nenhum aniversariante neste mês.</p>';
             } else {
-                mesSet.forEach(m => {
+                mesSet.forEach(({ m, n }) => {
+                    const diaMes = `${String(n.dia).padStart(2, '0')}/${String(n.mes).padStart(2, '0')}`;
                     listaAniv.innerHTML += `
                         <div class="flex items-center justify-between p-3 bg-amber-50/50 rounded-lg border border-amber-100">
                             <div>
@@ -1188,7 +1206,7 @@
                                 <p class="text-xs text-[#6e473b] italic">${m.nome_religioso || '—'}</p>
                             </div>
                             <div class="text-right">
-                                <span class="text-xs font-bold text-amber-900 bg-amber-200/60 px-2 py-0.5 rounded">${m.data_nascimento}</span>
+                                <span class="text-xs font-bold text-amber-900 bg-amber-200/60 px-2 py-0.5 rounded">${diaMes}</span>
                                 <p class="text-xs text-slate-400 mt-0.5">${m.telefone || ''}</p>
                             </div>
                         </div>
@@ -1982,7 +2000,7 @@
             const ano = parseInt(document.getElementById('selAnoMensalidade').value);
             const mesesNomes = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
             
-            const mesEscolha = prompt(`Digite o número do mês que deseja ZERAR (1 para Jan ... 9 para Set ... 12 para Dez) no ano ${ano}:`, '9');
+            const mesEscolha = prompt(`Digite o número do mês que deseja ZERAR (1 para Jan ... 9 para Set ... 12 para Dez) no ano ${ano}:`, String(MES_ATUAL));
             if (!mesEscolha) return;
 
             const mes = parseInt(mesEscolha);
@@ -2263,7 +2281,7 @@
                 let totalPendente = 0;
 
                 membros.forEach(m => {
-                    const reg = mensalidades[m.nome]?.[2026]?.[9];
+                    const reg = mensalidades[m.nome]?.[ANO_ATUAL]?.[MES_ATUAL];
                     const isEm = m.status === 'Emérito' || m.status === 'Falecido(a)';
                     const st = reg ? (typeof reg === 'object' ? reg.status : reg) : (isEm ? 'Isento' : 'Pendente');
                     const val = (reg && typeof reg === 'object' && reg.valor !== undefined && reg.valor !== null) ? parseFloat(reg.valor) : 0.00;
@@ -2280,7 +2298,7 @@
                 c.innerHTML = `
                     <div class="space-y-4">
                         <div class="flex flex-wrap justify-between items-center gap-2 no-print">
-                            <h3 class="font-bold text-lg text-slate-800">Balancete Mensal — Setembro / 2026</h3>
+                            <h3 class="font-bold text-lg text-slate-800">Balancete Mensal — ${MESES_NOMES[MES_ATUAL]} / ${ANO_ATUAL}</h3>
                             <div class="flex gap-2">
                                 <button onclick="exportarExcelBalancete()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-sm transition">
                                     <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Baixar em Excel (.xlsx)
@@ -2490,7 +2508,7 @@
                             </select>
                             <select id="repAnoFechamento" onchange="atualizarViewFechamentoMes()" class="border border-slate-300 rounded-lg p-1.5 text-xs font-semibold bg-white">
                                 <option value="2024">2024</option><option value="2025">2025</option>
-                                <option value="2026" selected>2026</option><option value="2027">2027</option>
+                                <option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option>
                             </select>
                             <button onclick="exportarExcelFechamentoMes()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
                                 <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Baixar Excel (.xlsx)
@@ -2503,6 +2521,8 @@
                     <div id="targetFechamentoMes"></div>
                 </div>
             `;
+            document.getElementById('repMesFechamento').value = String(MES_ATUAL);
+            document.getElementById('repAnoFechamento').value = String(ANO_ATUAL);
             atualizarViewFechamentoMes();
             lucide.createIcons();
         }
@@ -2695,7 +2715,7 @@
             let itemsHtml = '';
             let totalPago = 0;
             for (let i = 1; i <= 12; i++) {
-                const reg = mensalidades[m.nome]?.[2026]?.[i];
+                const reg = mensalidades[m.nome]?.[ANO_ATUAL]?.[i];
                 const isEm = m.status === 'Emérito' || m.status === 'Falecido(a)';
                 const st = reg ? (typeof reg === 'object' ? reg.status : reg) : (isEm ? 'Isento' : 'Pendente');
                 const val = (reg && typeof reg === 'object' && reg.valor !== undefined && reg.valor !== null) ? parseFloat(reg.valor) : 0.00;
@@ -2709,7 +2729,7 @@
                 itemsHtml += `
                     <div class="p-3 border rounded-lg flex flex-col justify-between text-xs">
                         <div class="flex justify-between items-center mb-1">
-                            <span class="font-bold">${mesesNomes[i-1]} / 2026</span>
+                            <span class="font-bold">${mesesNomes[i-1]} / ${ANO_ATUAL}</span>
                             <span class="font-bold px-2 py-0.5 rounded ${badgeClass}">${st}</span>
                         </div>
                         <span class="text-slate-600 font-semibold">R$ ${val.toFixed(2)}</span>
@@ -2748,7 +2768,7 @@
             const mensalidades = getMensalidades();
             const dados = [];
             membros.forEach(m => {
-                const reg = mensalidades[m.nome]?.[2026]?.[9];
+                const reg = mensalidades[m.nome]?.[ANO_ATUAL]?.[MES_ATUAL];
                 const isEm = m.status === 'Emérito' || m.status === 'Falecido(a)';
                 const st = reg ? (typeof reg === 'object' ? reg.status : reg) : (isEm ? 'Isento' : 'Pendente');
                 const val = (reg && typeof reg === 'object' && reg.valor !== undefined && reg.valor !== null) ? parseFloat(reg.valor) : 0.00;
@@ -2756,7 +2776,7 @@
                     Membro: m.nome,
                     Status_Membro: m.status,
                     Telefone: m.telefone,
-                    Mes: 'Setembro/2026',
+                    Mes: `${MESES_NOMES[MES_ATUAL]}/${ANO_ATUAL}`,
                     Valor: val,
                     Situacao: st,
                     Forma: (reg && reg.forma) || 'PIX'
@@ -2764,8 +2784,8 @@
             });
             const ws = XLSX.utils.json_to_sheet(dados);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Balancete Setembro 2026");
-            XLSX.writeFile(wb, "Balancete_Setembro_2026.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, `Balancete ${MESES_NOMES[MES_ATUAL]} ${ANO_ATUAL}`);
+            XLSX.writeFile(wb, `Balancete_${MESES_NOMES[MES_ATUAL]}_${ANO_ATUAL}.xlsx`);
         }
 
         function exportarExcelVocacional(tipo) {
