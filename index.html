@@ -409,7 +409,7 @@
 
         <!-- 4. RELATÓRIOS -->
         <section id="tab-relatorios" class="tab-content hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 no-print">
                 <button onclick="openRelatorioModal('ficha')" class="bg-white hover:border-[#6e473b] p-5 rounded-xl border border-slate-200 shadow-sm text-left transition group">
                     <div class="w-10 h-10 bg-amber-50 text-[#6e473b] rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition">
                         <i data-lucide="user-check" class="w-5 h-5"></i>
@@ -440,6 +440,14 @@
                     </div>
                     <h4 class="font-bold text-slate-800 text-sm mb-1">4. Balancete do Mês</h4>
                     <p class="text-xs text-slate-500">Prestação de contas mensal com quem pagou, valores e pendências.</p>
+                </button>
+
+                <button onclick="openRelatorioModal('nascimentos')" class="bg-white hover:border-[#6e473b] p-5 rounded-xl border border-slate-200 shadow-sm text-left transition group">
+                    <div class="w-10 h-10 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                        <i data-lucide="cake" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm mb-1">5. Nascimentos</h4>
+                    <p class="text-xs text-slate-500">Nome e data de nascimento dos membros, em ordem crescente, com Excel e impressão.</p>
                 </button>
             </div>
 
@@ -2363,7 +2371,9 @@
                     </div>
                 `;
                 renderExtratoTarget(0);
-                        } else if (tipo === 'fechamento_mes') {
+                        } else if (tipo === 'nascimentos') {
+                renderRelatorioNascimentos();
+            } else if (tipo === 'fechamento_mes') {
                 renderRelatorioFechamentoMes();
             } else if (tipo === 'fechamento_ano') {
                 renderRelatorioFechamentoAno();
@@ -2371,6 +2381,107 @@
                 renderRelatorioVocacional(tipo);
             }
             lucide.createIcons();
+        }
+
+        // ===== Relatório de Nascimentos (nome e data de nascimento, em ordem crescente) =====
+        let _nascOrdem = 'data';      // 'data' = do mais velho ao mais novo | 'nome' = A→Z | 'aniv' = por mês e dia
+        let _nascStatus = 'todos';    // 'todos' ou um status (Ativo, Emérito, etc.)
+
+        function _escNasc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+        // Aceita "AAAA-MM-DD" e "DD/MM/AAAA"; devolve {a, m, d} ou null.
+        function _parseNasc(s) {
+            const v = String(s || '').trim();
+            let m = v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+            if (m) return { a: +m[1], m: +m[2], d: +m[3] };
+            m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (m) return { a: +m[3], m: +m[2], d: +m[1] };
+            return null;
+        }
+        function _fmtNasc(n) { return n ? String(n.d).padStart(2, '0') + '/' + String(n.m).padStart(2, '0') + '/' + n.a : '—'; }
+        function _idadeNasc(n) {
+            if (!n) return '—';
+            const h = new Date();
+            let i = h.getFullYear() - n.a;
+            if ((h.getMonth() + 1) < n.m || ((h.getMonth() + 1) === n.m && h.getDate() < n.d)) i--;
+            return i;
+        }
+        function _listaNascimentos() {
+            let lista = getMembros().map(m => ({ nome: m.nome || '', status: m.status || '', nasc: _parseNasc(m.data_nascimento) }));
+            if (_nascStatus !== 'todos') lista = lista.filter(x => x.status === _nascStatus);
+            const chave = x => x.nasc ? (x.nasc.a * 10000 + x.nasc.m * 100 + x.nasc.d) : Infinity;   // sem data vai para o fim
+            const chaveAniv = x => x.nasc ? (x.nasc.m * 100 + x.nasc.d) : Infinity;
+            lista.sort((x, y) => {
+                if (_nascOrdem === 'nome') return x.nome.localeCompare(y.nome, 'pt-BR');
+                if (_nascOrdem === 'aniv') return (chaveAniv(x) - chaveAniv(y)) || x.nome.localeCompare(y.nome, 'pt-BR');
+                return (chave(x) - chave(y)) || x.nome.localeCompare(y.nome, 'pt-BR');
+            });
+            return lista;
+        }
+        function renderRelatorioNascimentos() {
+            const c = document.getElementById('relatorioContainer');
+            const status = [...new Set(getMembros().map(m => m.status).filter(Boolean))];
+            const lista = _listaNascimentos();
+            const semData = lista.filter(x => !x.nasc).length;
+            const rotuloOrdem = { data: 'Data de nascimento (do mais velho ao mais novo)', nome: 'Nome (A a Z)', aniv: 'Aniversário no ano (por mês e dia)' }[_nascOrdem];
+            c.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex flex-wrap justify-between items-center gap-2 no-print">
+                        <h3 class="font-bold text-lg text-slate-800">Nascimentos dos Membros</h3>
+                        <div class="flex gap-2">
+                            <button onclick="exportarExcelNascimentos()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-sm">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Baixar em Excel (.xlsx)
+                            </button>
+                            <button onclick="window.print()" class="bg-[#6e473b] text-white px-4 py-2 rounded-lg text-sm font-semibold">🖨️ Imprimir</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-4 no-print">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Ordenar por:</label>
+                            <select onchange="_nascOrdem=this.value; renderRelatorioNascimentos()" class="border border-slate-300 rounded-lg p-2 text-sm">
+                                <option value="data" ${_nascOrdem === 'data' ? 'selected' : ''}>Data de nascimento (mais velho primeiro)</option>
+                                <option value="nome" ${_nascOrdem === 'nome' ? 'selected' : ''}>Nome (A a Z)</option>
+                                <option value="aniv" ${_nascOrdem === 'aniv' ? 'selected' : ''}>Aniversário no ano (mês e dia)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Situação:</label>
+                            <select onchange="_nascStatus=this.value; renderRelatorioNascimentos()" class="border border-slate-300 rounded-lg p-2 text-sm">
+                                <option value="todos" ${_nascStatus === 'todos' ? 'selected' : ''}>Todos</option>
+                                ${status.map(s => `<option value="${_escNasc(s)}" ${_nascStatus === s ? 'selected' : ''}>${_escNasc(s)}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-sm text-slate-700">
+                        <strong>Comunidade Alegria da Sagrada Face — Regional São João da Cruz (OCDS)</strong><br>
+                        Ordem: ${rotuloOrdem} · ${lista.length} membro(s)${semData ? ` · ${semData} sem data de nascimento cadastrada (no fim da lista)` : ''}
+                    </div>
+                    <div class="overflow-x-auto border rounded-lg">
+                        <table class="w-full text-left" id="tabelaNascimentos">
+                            <thead class="bg-slate-100 text-slate-700 text-xs font-bold uppercase">
+                                <tr><th class="p-2 w-12">Nº</th><th class="p-2">Nome</th><th class="p-2">Data de nascimento</th><th class="p-2">Idade</th><th class="p-2">Situação</th></tr>
+                            </thead>
+                            <tbody>
+                                ${lista.map((x, i) => `
+                                    <tr class="border-b text-xs">
+                                        <td class="p-2 text-slate-500">${i + 1}</td>
+                                        <td class="p-2 font-semibold">${_escNasc(x.nome)}</td>
+                                        <td class="p-2">${_fmtNasc(x.nasc)}</td>
+                                        <td class="p-2">${_idadeNasc(x.nasc)}</td>
+                                        <td class="p-2">${_escNasc(x.status) || '—'}</td>
+                                    </tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+            lucide.createIcons();
+        }
+        function exportarExcelNascimentos() {
+            const linhas = _listaNascimentos().map((x, i) => ({ 'Nº': i + 1, 'Nome': x.nome, 'Data de nascimento': _fmtNasc(x.nasc), 'Idade': _idadeNasc(x.nasc), 'Situação': x.status }));
+            const ws = XLSX.utils.json_to_sheet(linhas);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Nascimentos');
+            XLSX.writeFile(wb, 'Nascimentos_Membros_Alegria_Sagrada_Face.xlsx');
         }
 
         function renderRelatorioVocacional(tipo) {
