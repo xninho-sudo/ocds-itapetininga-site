@@ -118,6 +118,9 @@
             <button onclick="switchTab('mensalidades')" id="tabBtn-mensalidades" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-[#6e473b] hover:bg-slate-50 flex items-center gap-2 transition whitespace-nowrap">
                 <i data-lucide="wallet" class="w-4 h-4"></i> Mensalidades
             </button>
+            <button onclick="switchTab('frequencia')" id="tabBtn-frequencia" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-[#6e473b] hover:bg-slate-50 flex items-center gap-2 transition whitespace-nowrap">
+                <i data-lucide="calendar-check" class="w-4 h-4"></i> Frequência
+            </button>
             <button onclick="switchTab('financeiro')" id="tabBtn-financeiro" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-[#6e473b] hover:bg-slate-50 flex items-center gap-2 transition whitespace-nowrap">
                 <i data-lucide="arrow-left-right" class="w-4 h-4"></i> Livro Caixa (Financeiro)
             </button>
@@ -297,6 +300,49 @@
                         </thead>
                         <tbody id="gridMensalidadesBody" class="divide-y divide-slate-100"></tbody>
                         <tfoot id="gridMensalidadesFoot" class="bg-amber-50/80 border-t-2 border-[#6e473b] font-bold text-slate-800 text-xs"></tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3.2. FREQUÊNCIA ÀS REUNIÕES (2º domingo 09h00 · 4º domingo 16h00) -->
+        <section id="tab-frequencia" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-bold text-slate-700">Ano:</label>
+                        <select id="selAnoFrequencia" onchange="renderFrequenciaGrid()" class="text-sm border border-slate-300 rounded-lg px-3 py-1.5 bg-white font-semibold">
+                            <option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-bold text-slate-700">Período:</label>
+                        <select id="selSemestreFrequencia" onchange="renderFrequenciaGrid()" class="text-sm border border-slate-300 rounded-lg px-3 py-1.5 bg-white font-semibold">
+                            <option value="1">1º semestre (Jan–Jun)</option>
+                            <option value="2">2º semestre (Jul–Dez)</option>
+                        </select>
+                    </div>
+                    <button id="btnLancarReuniao" onclick="abrirModalLoteFrequencia()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                        <i data-lucide="check-check" class="w-4 h-4"></i> Lançar Reunião
+                    </button>
+                    <button id="btnAjustarCalendario" onclick="abrirModalCalendarioFrequencia()" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition">
+                        <i data-lucide="calendar-cog" class="w-3.5 h-3.5 text-amber-800"></i> Reunião Extra / Cancelada
+                    </button>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 text-xs">
+                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> F = Frequente</span>
+                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-400"></span> J = Justificado</span>
+                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-red-500"></span> NJ = Não Justificado</span>
+                </div>
+            </div>
+            <p class="text-xs text-slate-500 -mt-3 px-1">Reuniões: <strong>2º domingo às 09h00</strong> e <strong>4º domingo às 16h00</strong>. Entram na conta só os membros <strong>Ativos</strong>. Limite de faltas justificadas: <strong>30% das reuniões do ano</strong> (Estatuto Particular, Art. 40).</p>
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead id="gridFrequenciaHead" class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 text-xs"></thead>
+                        <tbody id="gridFrequenciaBody" class="divide-y divide-slate-100"></tbody>
+                        <tfoot id="gridFrequenciaFoot" class="bg-amber-50/80 border-t-2 border-[#6e473b] font-bold text-slate-800 text-xs"></tfoot>
                     </table>
                 </div>
             </div>
@@ -517,6 +563,32 @@
                         </div>
                         <h5 class="font-bold text-slate-800 text-sm">Iniciantes (Sem Admissão)</h5>
                         <p class="text-[11px] text-slate-500 mt-1">Membros recém-chegados em discernimento inicial.</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SEÇÃO DE RELATÓRIOS DE FREQUÊNCIA -->
+            <div class="no-print pt-2">
+                <h4 class="text-xs font-bold text-[#6e473b] uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <i data-lucide="calendar-check" class="w-4 h-4"></i> Relatórios de Frequência às Reuniões
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button onclick="renderRelatorioFrequenciaGeral()" class="bg-white hover:border-emerald-600 p-5 rounded-xl border border-slate-200 shadow-sm text-left transition group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-base">📊</span>
+                            <span class="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-0.5 rounded-full">Geral</span>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">Frequência Geral da Comunidade</h5>
+                        <p class="text-xs text-slate-500 mt-1">F, J e NJ de cada membro no ano ou no mês, % de presença, limite de 30% de justificadas (Art. 40) e alertas.</p>
+                    </button>
+
+                    <button onclick="renderRelatorioFrequenciaIndividual()" class="bg-white hover:border-[#6e473b] p-5 rounded-xl border border-slate-200 shadow-sm text-left transition group">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-9 h-9 rounded-lg bg-amber-50 text-[#6e473b] flex items-center justify-center font-bold text-base">👤</span>
+                            <span class="text-xs font-bold bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full">Individual</span>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">Frequência Individual do Membro</h5>
+                        <p class="text-xs text-slate-500 mt-1">Reunião por reunião, com o motivo de cada justificativa, totais do ano e campo para assinatura.</p>
                     </button>
                 </div>
             </div>
@@ -844,6 +916,122 @@
         </div>
     </div>
 
+    <!-- MODAL FREQUÊNCIA INDIVIDUAL (clique na célula) -->
+    <div id="modalFrequencia" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 border-t-8 border-[#6e473b]">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 class="font-bold text-base text-slate-800">Frequência na Reunião</h3>
+                <button onclick="closeModal('modalFrequencia')" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form onsubmit="handleSalvarFrequencia(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="fq_membroId">
+                <input type="hidden" id="fq_data">
+                <input type="hidden" id="fq_horario">
+                <div>
+                    <span class="text-slate-500 block">Membro:</span>
+                    <strong class="text-sm text-slate-800 block" id="fq_labelMembro"></strong>
+                    <span class="text-slate-500 text-[11px]" id="fq_labelReuniao"></span>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Situação</label>
+                    <select id="fq_status" onchange="document.getElementById('fq_boxMotivo').classList.toggle('hidden', this.value !== 'J')" class="w-full p-2 border rounded-lg bg-white font-semibold">
+                        <option value="F">🟢 F — Frequente (presente)</option>
+                        <option value="J">🟡 J — Falta Justificada</option>
+                        <option value="NJ">🔴 NJ — Falta Não Justificada</option>
+                        <option value="">⚪ Limpar (sem lançamento)</option>
+                    </select>
+                </div>
+                <div id="fq_boxMotivo" class="hidden">
+                    <label class="block font-semibold mb-1">Motivo da justificativa</label>
+                    <input type="text" id="fq_motivo" class="w-full p-2 border rounded-lg" placeholder="Ex.: doença, viagem, trabalho, família...">
+                </div>
+                <div class="pt-3 border-t flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('modalFrequencia')" class="px-4 py-2 border rounded-lg hover:bg-slate-100">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 bg-[#6e473b] hover:bg-[#4a2f26] text-white font-semibold rounded-lg shadow-sm">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL LANÇAR REUNIÃO (FREQUÊNCIA EM LOTE) -->
+    <div id="modalLoteFrequencia" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col border-t-8 border-emerald-600">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-base text-slate-800">Lançar Frequência da Reunião</h3>
+                    <p class="text-xs text-slate-500">Todos começam como <strong>F</strong>. Troque apenas quem faltou.</p>
+                </div>
+                <button onclick="closeModal('modalLoteFrequencia')" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form onsubmit="handleSalvarLoteFrequencia(event)" class="p-5 overflow-y-auto space-y-4 text-xs">
+                <div class="bg-slate-50 p-3 rounded-lg">
+                    <label class="block font-semibold mb-1">Reunião</label>
+                    <select id="fqLote_reuniao" onchange="preencherListaLoteFrequencia()" class="w-full p-2 border rounded bg-white font-semibold"></select>
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="font-bold uppercase text-slate-700">Membros ativos:</label>
+                        <button type="button" onclick="marcarTodosLoteFrequencia('F')" class="text-emerald-700 hover:underline font-semibold">Marcar todos como F</button>
+                    </div>
+                    <div id="listaLoteFrequencia" class="space-y-1.5 max-h-80 overflow-y-auto p-2 border rounded-lg"></div>
+                </div>
+                <div class="pt-3 border-t flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('modalLoteFrequencia')" class="px-4 py-2 border rounded-lg hover:bg-slate-100">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-sm">Gravar Frequência</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL REUNIÃO EXTRA / CANCELADA -->
+    <div id="modalCalendarioFrequencia" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[85vh] flex flex-col border-t-8 border-amber-500">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-base text-slate-800">Reunião Extra ou Cancelada</h3>
+                    <p class="text-xs text-slate-500">Reunião cancelada não conta falta. Reunião extra entra na conta do ano.</p>
+                </div>
+                <button onclick="closeModal('modalCalendarioFrequencia')" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form onsubmit="handleSalvarAjusteCalendario(event)" class="p-5 overflow-y-auto space-y-3 text-xs">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold mb-1">Tipo</label>
+                        <select id="fqCal_tipo" class="w-full p-2 border rounded-lg bg-white font-semibold">
+                            <option value="cancelada">❌ Reunião cancelada (não houve)</option>
+                            <option value="extra">➕ Reunião extra</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Data</label>
+                        <input type="date" id="fqCal_data" class="w-full p-2 border rounded-lg bg-white" required>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Horário (reunião extra)</label>
+                        <input type="time" id="fqCal_horario" class="w-full p-2 border rounded-lg bg-white" value="09:00">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Descrição / motivo</label>
+                        <input type="text" id="fqCal_descricao" class="w-full p-2 border rounded-lg" placeholder="Ex.: Retiro anual, chuva forte...">
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg shadow-sm">Adicionar</button>
+                </div>
+                <div class="border-t pt-3">
+                    <label class="font-bold uppercase text-slate-700 block mb-2">Ajustes já registrados</label>
+                    <div id="listaAjustesCalendario" class="space-y-1.5"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- JAVASCRIPT LOGIC INTEGRADA COM SUPABASE -->
     <script>
         const MESES_NOMES = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -851,7 +1039,10 @@
         const ANO_ATUAL = new Date().getFullYear();
         document.addEventListener('DOMContentLoaded', () => {
             ['selMesFinanceiro', 'lote_mes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = String(MES_ATUAL); });
-            ['selAnoMensalidade', 'selAnoFinanceiro'].forEach(id => { const el = document.getElementById(id); if (el) el.value = String(ANO_ATUAL); });
+            ['selAnoMensalidade', 'selAnoFinanceiro', 'selAnoFrequencia'].forEach(id => { const el = document.getElementById(id); if (el) el.value = String(ANO_ATUAL); });
+            const selSem = document.getElementById('selSemestreFrequencia');
+            if (selSem) selSem.value = MES_ATUAL <= 6 ? '1' : '2';
+            renderFrequenciaGrid();
         });
         // CONFIGURAÇÃO REAL DO SUPABASE
         const SUPABASE_URL = "https://lbzixpzqsmautkchricc.supabase.co";
@@ -934,6 +1125,9 @@
                         email: x.email
                     }));
                 }
+
+                // 4. Frequência às reuniões (tabelas frequencia e frequencia_calendario)
+                await carregarFrequenciaDaNuvem();
 
                 updateDashboard();
                 renderMembrosTable();
@@ -1089,6 +1283,10 @@
             if (btnNovo) btnNovo.style.display = podeEditar ? 'inline-flex' : 'none';
             const btnLote = document.getElementById('btnLoteMensalidade');
             if (btnLote) btnLote.style.display = podeEditar ? 'inline-flex' : 'none';
+            ['btnLancarReuniao', 'btnAjustarCalendario'].forEach(id => {
+                const b = document.getElementById(id);
+                if (b) b.style.display = podeEditar ? 'inline-flex' : 'none';
+            });
             const boxUser = document.getElementById('boxNovoUsuario');
             if (boxUser) boxUser.style.display = (user.perfil === 'admin') ? 'block' : 'none';
         }
@@ -1135,6 +1333,7 @@
             if (tabId === 'dashboard') updateDashboard();
             if (tabId === 'membros') renderMembrosTable();
             if (tabId === 'mensalidades') renderMensalidadesGrid();
+            if (tabId === 'frequencia') renderFrequenciaGrid();
             if (tabId === 'financeiro') renderFinanceiro();
             if (tabId === 'usuarios') renderUsuariosTable();
             lucide.createIcons();
@@ -3014,6 +3213,650 @@
             // parece mudar (o usuário continua vendo só os cartões do topo).
             const alvo = document.getElementById('relatorioContainer');
             if (alvo) alvo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ==================== FREQUÊNCIA ÀS REUNIÕES ====================
+        // Reuniões fixas: 2º domingo às 09h00 e 4º domingo às 16h00 (mais extras, menos canceladas).
+        // Estatuto Particular da Província São José:
+        //   Art. 40 - até 30% de ausências justificadas nas atividades anuais programadas;
+        //   Art. 41 - falta não justificada: o Presidente contata o membro;
+        //   Art. 50 - mais de 6 meses sem comparecer nem justificar: membro inativo.
+        // Os registros ficam ligados ao id do membro (não ao nome), para não perder histórico ao corrigir um nome.
+        const FREQ_LIMITE_JUSTIFICADAS = 0.30;
+        const FREQ_NJ_SEGUIDAS_6_MESES = 12; // 2 reuniões por mês x 6 meses
+        const FREQ_STATUS_INFO = {
+            F:  { rotulo: 'F',  nome: 'Frequente',         classe: 'bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold' },
+            J:  { rotulo: 'J',  nome: 'Justificado',       classe: 'bg-amber-100 text-amber-800 border border-amber-300 font-bold' },
+            NJ: { rotulo: 'NJ', nome: 'Não Justificado',   classe: 'bg-red-100 text-red-700 border border-red-300 font-bold' }
+        };
+        let FREQUENCIA_CACHE = [];       // tabela frequencia: membro_id, membro_nome, data_reuniao, horario, status, motivo
+        let FREQ_CALENDARIO_CACHE = [];  // tabela frequencia_calendario: data, tipo (extra | cancelada), horario, descricao
+        let FREQ_TABELAS_OK = true;
+
+        function _escF(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+        function _isoF(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
+        function _hojeF() { return _isoF(new Date()); }
+        function _dataBR(iso) { const [a, m, d] = String(iso).slice(0, 10).split('-'); return `${d}/${m}/${a}`; }
+        function _horaBR(h) { return String(h || '').slice(0, 5).replace(':', 'h'); }
+        function _pct(n, total) { return total > 0 ? Math.round((n / total) * 1000) / 10 : null; }
+        function _pctTxt(v) { return v === null ? '—' : `${String(v).replace('.', ',')}%`; }
+
+        // n-ésimo domingo do mês (mes de 1 a 12)
+        function _domingoDoMes(ano, mes, n) {
+            const primeiro = new Date(ano, mes - 1, 1);
+            const deslocamento = (7 - primeiro.getDay()) % 7;
+            return new Date(ano, mes - 1, 1 + deslocamento + (n - 1) * 7);
+        }
+
+        // Todas as reuniões do ano, já com extras e sem as canceladas, em ordem de data
+        function reunioesDoAno(ano) {
+            ano = parseInt(ano);
+            const ajustes = FREQ_CALENDARIO_CACHE.filter(a => String(a.data).startsWith(ano + '-'));
+            const canceladas = new Set(ajustes.filter(a => a.tipo === 'cancelada').map(a => String(a.data).slice(0, 10)));
+            const lista = [];
+            for (let mes = 1; mes <= 12; mes++) {
+                lista.push({ data: _isoF(_domingoDoMes(ano, mes, 2)), horario: '09:00', tipo: 'ordinaria', descricao: '2º domingo' });
+                lista.push({ data: _isoF(_domingoDoMes(ano, mes, 4)), horario: '16:00', tipo: 'ordinaria', descricao: '4º domingo' });
+            }
+            const res = lista.filter(r => !canceladas.has(r.data));
+            ajustes.filter(a => a.tipo === 'extra').forEach(a => {
+                const data = String(a.data).slice(0, 10);
+                if (!res.some(r => r.data === data)) {
+                    res.push({ data, horario: String(a.horario || '09:00').slice(0, 5), tipo: 'extra', descricao: a.descricao || 'Reunião extra' });
+                }
+            });
+            return res.sort((a, b) => a.data.localeCompare(b.data));
+        }
+
+        function _ehReuniaoOrdinaria(iso) {
+            const [a, m] = iso.split('-').map(Number);
+            return [_isoF(_domingoDoMes(a, m, 2)), _isoF(_domingoDoMes(a, m, 4))].includes(iso);
+        }
+
+        function membrosFrequencia() {
+            return getMembros().filter(m => m.status === 'Ativo');
+        }
+
+        function _etapaMembro(m) {
+            if (m.data_promessas_definitivas && String(m.data_promessas_definitivas).trim()) return 'Promessas Definitivas';
+            if (m.data_promessas_temporarias && String(m.data_promessas_temporarias).trim()) return 'Promessas Temporárias';
+            if (m.data_admissao && String(m.data_admissao).trim()) return 'Admissão';
+            return 'Iniciante';
+        }
+
+        function _registroFrequencia(membroId, data) {
+            return FREQUENCIA_CACHE.find(r => String(r.membro_id) === String(membroId) && String(r.data_reuniao).slice(0, 10) === data) || null;
+        }
+
+        // Totais de um membro num conjunto de reuniões (só contam reuniões já lançadas)
+        function resumoFrequencia(membroId, reunioes) {
+            const t = { F: 0, J: 0, NJ: 0, lancadas: 0 };
+            reunioes.forEach(r => {
+                const reg = _registroFrequencia(membroId, r.data);
+                if (reg && t[reg.status] !== undefined) { t[reg.status]++; t.lancadas++; }
+            });
+            t.presenca = _pct(t.F, t.lancadas);
+            return t;
+        }
+
+        // Situação do membro no ano, conforme o Estatuto Particular (Art. 40, 41 e 50)
+        function alertasFrequencia(membroId, ano) {
+            const reunioesAno = reunioesDoAno(ano);
+            const limite = Math.floor(reunioesAno.length * FREQ_LIMITE_JUSTIFICADAS);
+            const t = resumoFrequencia(membroId, reunioesAno);
+            const alertas = [];
+            if (t.J > limite) alertas.push({ nivel: 'alto', texto: `Acima do limite de justificadas: ${t.J} de ${limite} (Art. 40)` });
+            else if (limite > 0 && t.J >= limite - 1 && t.J > 0) alertas.push({ nivel: 'medio', texto: `Perto do limite de justificadas: ${t.J} de ${limite} (Art. 40)` });
+            if (t.NJ > 0) alertas.push({ nivel: 'medio', texto: `${t.NJ} falta(s) não justificada(s): o Presidente contata o membro (Art. 41)` });
+
+            // Faltas não justificadas seguidas, olhando os últimos lançamentos (inclusive de anos anteriores)
+            const regs = FREQUENCIA_CACHE.filter(r => String(r.membro_id) === String(membroId))
+                .sort((a, b) => String(b.data_reuniao).localeCompare(String(a.data_reuniao)));
+            let seguidas = 0;
+            for (const r of regs) { if (r.status === 'NJ') seguidas++; else break; }
+            if (seguidas >= FREQ_NJ_SEGUIDAS_6_MESES) alertas.unshift({ nivel: 'alto', texto: `${seguidas} faltas não justificadas seguidas (6 meses ou mais): membro inativo (Art. 50)` });
+            return { limite, totais: t, alertas };
+        }
+
+        function _badgesAlertas(alertas) {
+            if (!alertas.length) return '<span class="text-emerald-700 font-semibold">✓ Regular</span>';
+            return alertas.map(a => `<div class="${a.nivel === 'alto' ? 'text-red-700' : 'text-amber-700'} font-semibold">${a.nivel === 'alto' ? '🔴' : '🟡'} ${_escF(a.texto)}</div>`).join('');
+        }
+
+        // Supabase devolve no máximo 1000 linhas por consulta: busca em páginas
+        async function _selecionarTudo(tabela) {
+            const todas = [];
+            for (let de = 0; ; de += 1000) {
+                const { data, error } = await sb.from(tabela).select('*').range(de, de + 999);
+                if (error) throw error;
+                todas.push(...(data || []));
+                if (!data || data.length < 1000) break;
+            }
+            return todas;
+        }
+
+        async function carregarFrequenciaDaNuvem() {
+            if (!sb) return;
+            try {
+                FREQUENCIA_CACHE = await _selecionarTudo('frequencia');
+                FREQ_CALENDARIO_CACHE = await _selecionarTudo('frequencia_calendario');
+                FREQ_TABELAS_OK = true;
+            } catch (e) {
+                FREQ_TABELAS_OK = false;
+                console.warn('Tabelas de frequência ainda não criadas no Supabase (rode supabase_frequencia.sql):', e);
+            }
+            renderFrequenciaGrid();
+        }
+
+        function _podeEditarFrequencia() {
+            const user = getUsuarioLogado();
+            return !!user && (user.perfil === 'admin' || user.perfil === 'editor');
+        }
+
+        // Grava (ou apaga, quando status vazio) uma ou mais linhas de frequência
+        async function _gravarFrequencia(linhas) {
+            const user = getUsuarioLogado();
+            const gravar = [], apagar = [];
+            linhas.forEach(l => {
+                FREQUENCIA_CACHE = FREQUENCIA_CACHE.filter(r => !(String(r.membro_id) === String(l.membro_id) && String(r.data_reuniao).slice(0, 10) === l.data_reuniao));
+                if (l.status) {
+                    const reg = { ...l, motivo: l.status === 'J' ? (l.motivo || '') : '', lancado_por: user ? user.nome : null, atualizado_em: new Date().toISOString() };
+                    FREQUENCIA_CACHE.push(reg);
+                    gravar.push(reg);
+                } else {
+                    apagar.push(l);
+                }
+            });
+            renderFrequenciaGrid();
+            if (!sb) return;
+            try {
+                if (gravar.length) {
+                    const { error } = await sb.from('frequencia').upsert(gravar, { onConflict: 'membro_id,data_reuniao' });
+                    if (error) throw error;
+                }
+                for (const l of apagar) {
+                    const { error } = await sb.from('frequencia').delete().match({ membro_id: l.membro_id, data_reuniao: l.data_reuniao });
+                    if (error) throw error;
+                }
+            } catch (err) {
+                console.error('Erro ao gravar frequência no Supabase:', err);
+                alert('Atenção: a frequência não foi gravada na nuvem.\n' + (err.message || err) + '\n\nSe as tabelas ainda não existem, rode o arquivo supabase_frequencia.sql no Supabase.');
+            }
+        }
+
+        // ---------- Aba Frequência (grade por semestre) ----------
+        function renderFrequenciaGrid() {
+            const head = document.getElementById('gridFrequenciaHead');
+            const body = document.getElementById('gridFrequenciaBody');
+            const foot = document.getElementById('gridFrequenciaFoot');
+            if (!head || !body) return;
+            const ano = document.getElementById('selAnoFrequencia').value;
+            const semestre = document.getElementById('selSemestreFrequencia').value;
+            const reunioesAno = reunioesDoAno(ano);
+            const reunioes = reunioesAno.filter(r => {
+                const mes = parseInt(r.data.slice(5, 7));
+                return semestre === '1' ? mes <= 6 : mes >= 7;
+            });
+            const hoje = _hojeF();
+            const podeEditar = _podeEditarFrequencia();
+            const membros = membrosFrequencia();
+            const limite = Math.floor(reunioesAno.length * FREQ_LIMITE_JUSTIFICADAS);
+
+            head.innerHTML = `
+                <tr>
+                    <th class="py-3 px-3 min-w-[200px] sticky left-0 bg-slate-50">Membro</th>
+                    ${reunioes.map(r => `
+                        <th class="py-2 px-1 text-center min-w-[58px] ${r.data > hoje ? 'text-slate-400' : ''}">
+                            <div>${_dataBR(r.data).slice(0, 5)}</div>
+                            <div class="text-[9px] font-normal">${_horaBR(r.horario)}${r.tipo === 'extra' ? ' · extra' : ''}</div>
+                        </th>`).join('')}
+                    <th class="py-3 px-2 text-center bg-slate-100 text-[#6e473b]" title="Totais do ano inteiro">F</th>
+                    <th class="py-3 px-2 text-center bg-slate-100 text-[#6e473b]" title="Justificadas no ano / limite de 30% (Art. 40)">J / ${limite}</th>
+                    <th class="py-3 px-2 text-center bg-slate-100 text-[#6e473b]">NJ</th>
+                    <th class="py-3 px-2 text-center bg-slate-100 text-[#6e473b] min-w-[70px]">Presença</th>
+                </tr>`;
+
+            if (!FREQ_TABELAS_OK) {
+                body.innerHTML = `<tr><td colspan="${reunioes.length + 5}" class="p-4 text-center text-amber-800 bg-amber-50 font-semibold">As tabelas de frequência ainda não foram criadas no Supabase. Rode o arquivo <code>supabase_frequencia.sql</code> no SQL Editor e recarregue a página.</td></tr>`;
+                if (foot) foot.innerHTML = '';
+                return;
+            }
+            if (membros.length === 0) {
+                body.innerHTML = `<tr><td colspan="${reunioes.length + 5}" class="text-center py-6 text-slate-400">Nenhum membro ativo.</td></tr>`;
+                if (foot) foot.innerHTML = '';
+                return;
+            }
+
+            body.innerHTML = membros.map(m => {
+                const { totais, alertas } = alertasFrequencia(m.id, ano);
+                const corLinha = alertas.some(a => a.nivel === 'alto') ? 'bg-red-50/40' : '';
+                const cols = reunioes.map(r => {
+                    const reg = _registroFrequencia(m.id, r.data);
+                    const info = reg ? FREQ_STATUS_INFO[reg.status] : null;
+                    const classe = info ? info.classe : (r.data > hoje ? 'bg-white text-slate-300 border border-slate-100' : 'bg-slate-50 text-slate-400 border border-slate-200');
+                    const titulo = reg ? `${info.nome}${reg.motivo ? ' — ' + reg.motivo : ''}` : (r.data > hoje ? 'Reunião futura' : 'Sem lançamento');
+                    const acao = podeEditar ? `onclick="abrirModalFrequencia('${_escF(m.id)}', '${r.data}', '${r.horario}')"` : 'disabled';
+                    return `<td class="py-1.5 px-1 text-center"><button ${acao} title="${_escF(titulo)}" class="w-full py-1.5 rounded text-[10px] ${classe} transition">${info ? info.rotulo : '—'}</button></td>`;
+                }).join('');
+                return `
+                    <tr class="hover:bg-slate-50/80 transition ${corLinha}">
+                        <td class="py-2 px-3 font-semibold text-slate-800 whitespace-nowrap sticky left-0 bg-white" title="${_escF(alertas.map(a => a.texto).join(' | '))}">
+                            ${_escF(m.nome)} ${alertas.length ? (alertas.some(a => a.nivel === 'alto') ? '🔴' : '🟡') : ''}
+                        </td>
+                        ${cols}
+                        <td class="py-2 px-2 text-center font-bold text-emerald-700 bg-slate-50/50">${totais.F}</td>
+                        <td class="py-2 px-2 text-center font-bold ${totais.J > limite ? 'text-red-700' : 'text-amber-700'} bg-slate-50/50">${totais.J}</td>
+                        <td class="py-2 px-2 text-center font-bold text-red-700 bg-slate-50/50">${totais.NJ}</td>
+                        <td class="py-2 px-2 text-center font-bold text-slate-900 bg-slate-50/50">${_pctTxt(totais.presenca)}</td>
+                    </tr>`;
+            }).join('');
+
+            if (foot) {
+                const colsFoot = reunioes.map(r => {
+                    let f = 0, lanc = 0;
+                    membros.forEach(m => { const reg = _registroFrequencia(m.id, r.data); if (reg) { lanc++; if (reg.status === 'F') f++; } });
+                    return `<td class="py-2 px-1 text-center text-emerald-800 whitespace-nowrap">${lanc ? `${f}/${lanc}` : '—'}</td>`;
+                }).join('');
+                foot.innerHTML = `
+                    <tr>
+                        <td class="py-3 px-3 font-bold uppercase text-[#6e473b] whitespace-nowrap sticky left-0 bg-amber-50">Presentes na reunião</td>
+                        ${colsFoot}
+                        <td colspan="4" class="py-3 px-2 text-center text-[10px] text-slate-500 font-normal">Totais e presença: ano de ${ano}</td>
+                    </tr>`;
+            }
+            lucide.createIcons();
+        }
+
+        function abrirModalFrequencia(membroId, data, horario) {
+            if (!_podeEditarFrequencia()) return;
+            const m = getMembros().find(x => String(x.id) === String(membroId));
+            const reg = _registroFrequencia(membroId, data);
+            document.getElementById('fq_membroId').value = membroId;
+            document.getElementById('fq_data').value = data;
+            document.getElementById('fq_horario').value = horario;
+            document.getElementById('fq_labelMembro').innerText = m ? m.nome : '';
+            document.getElementById('fq_labelReuniao').innerText = `Reunião de ${_dataBR(data)} às ${_horaBR(horario)}`;
+            document.getElementById('fq_status').value = reg ? reg.status : 'F';
+            document.getElementById('fq_motivo').value = reg ? (reg.motivo || '') : '';
+            document.getElementById('fq_boxMotivo').classList.toggle('hidden', document.getElementById('fq_status').value !== 'J');
+            document.getElementById('modalFrequencia').classList.remove('hidden');
+        }
+
+        async function handleSalvarFrequencia(e) {
+            e.preventDefault();
+            const membroId = document.getElementById('fq_membroId').value;
+            const m = getMembros().find(x => String(x.id) === String(membroId));
+            closeModal('modalFrequencia');
+            await _gravarFrequencia([{
+                membro_id: membroId,
+                membro_nome: m ? m.nome : '',
+                data_reuniao: document.getElementById('fq_data').value,
+                horario: document.getElementById('fq_horario').value,
+                status: document.getElementById('fq_status').value,
+                motivo: document.getElementById('fq_motivo').value.trim()
+            }]);
+        }
+
+        // ---------- Lançar reunião (lote) ----------
+        function abrirModalLoteFrequencia() {
+            if (!_podeEditarFrequencia()) return;
+            const ano = document.getElementById('selAnoFrequencia').value;
+            const reunioes = reunioesDoAno(ano);
+            const hoje = _hojeF();
+            const passadas = reunioes.filter(r => r.data <= hoje);
+            const padrao = passadas.length ? passadas[passadas.length - 1] : reunioes[0];
+            document.getElementById('fqLote_reuniao').innerHTML = reunioes.map(r => `
+                <option value="${r.data}|${r.horario}" ${padrao && r.data === padrao.data ? 'selected' : ''}>
+                    ${_dataBR(r.data)} às ${_horaBR(r.horario)} — ${_escF(r.descricao)}${r.data > hoje ? ' (futura)' : ''}
+                </option>`).join('');
+            preencherListaLoteFrequencia();
+            document.getElementById('modalLoteFrequencia').classList.remove('hidden');
+        }
+
+        function preencherListaLoteFrequencia() {
+            const [data] = document.getElementById('fqLote_reuniao').value.split('|');
+            document.getElementById('listaLoteFrequencia').innerHTML = membrosFrequencia().map(m => {
+                const reg = _registroFrequencia(m.id, data);
+                const st = reg ? reg.status : 'F';
+                return `
+                    <div class="flex flex-wrap items-center gap-2 p-1.5 rounded hover:bg-slate-50" data-membro-id="${_escF(m.id)}" data-membro-nome="${_escF(m.nome)}">
+                        <span class="flex-1 min-w-[160px] font-semibold text-slate-700">${_escF(m.nome)}</span>
+                        <select class="fqLoteStatus p-1.5 border rounded bg-white font-semibold" onchange="this.parentElement.querySelector('.fqLoteMotivo').classList.toggle('hidden', this.value !== 'J')">
+                            <option value="F" ${st === 'F' ? 'selected' : ''}>🟢 F</option>
+                            <option value="J" ${st === 'J' ? 'selected' : ''}>🟡 J</option>
+                            <option value="NJ" ${st === 'NJ' ? 'selected' : ''}>🔴 NJ</option>
+                        </select>
+                        <input type="text" class="fqLoteMotivo ${st === 'J' ? '' : 'hidden'} p-1.5 border rounded w-full sm:w-48" placeholder="Motivo da justificativa" value="${_escF(reg && reg.motivo ? reg.motivo : '')}">
+                    </div>`;
+            }).join('') || '<p class="text-slate-400 text-center py-4">Nenhum membro ativo.</p>';
+        }
+
+        function marcarTodosLoteFrequencia(status) {
+            document.querySelectorAll('#listaLoteFrequencia .fqLoteStatus').forEach(sel => {
+                sel.value = status;
+                sel.dispatchEvent(new Event('change'));
+            });
+        }
+
+        async function handleSalvarLoteFrequencia(e) {
+            e.preventDefault();
+            const [data, horario] = document.getElementById('fqLote_reuniao').value.split('|');
+            if (data > _hojeF() && !confirm(`A reunião de ${_dataBR(data)} ainda não aconteceu. Gravar mesmo assim?`)) return;
+            const linhas = [...document.querySelectorAll('#listaLoteFrequencia [data-membro-id]')].map(div => ({
+                membro_id: div.dataset.membroId,
+                membro_nome: div.dataset.membroNome,
+                data_reuniao: data,
+                horario,
+                status: div.querySelector('.fqLoteStatus').value,
+                motivo: div.querySelector('.fqLoteMotivo').value.trim()
+            }));
+            closeModal('modalLoteFrequencia');
+            await _gravarFrequencia(linhas);
+        }
+
+        // ---------- Reunião extra / cancelada ----------
+        function abrirModalCalendarioFrequencia() {
+            if (!_podeEditarFrequencia()) return;
+            renderListaAjustesCalendario();
+            document.getElementById('modalCalendarioFrequencia').classList.remove('hidden');
+        }
+
+        function renderListaAjustesCalendario() {
+            const lista = [...FREQ_CALENDARIO_CACHE].sort((a, b) => String(b.data).localeCompare(String(a.data)));
+            document.getElementById('listaAjustesCalendario').innerHTML = lista.map(a => `
+                <div class="flex items-center justify-between gap-2 p-2 rounded border ${a.tipo === 'cancelada' ? 'bg-red-50 border-red-200' : 'bg-emerald-50 border-emerald-200'}">
+                    <span>${a.tipo === 'cancelada' ? '❌ Cancelada' : '➕ Extra'} · <strong>${_dataBR(a.data)}</strong>${a.tipo === 'extra' ? ' às ' + _horaBR(a.horario) : ''}${a.descricao ? ' — ' + _escF(a.descricao) : ''}</span>
+                    <button type="button" onclick="excluirAjusteCalendario('${String(a.data).slice(0, 10)}')" class="text-red-600 hover:underline font-semibold">Remover</button>
+                </div>`).join('') || '<p class="text-slate-400">Nenhum ajuste registrado.</p>';
+        }
+
+        async function handleSalvarAjusteCalendario(e) {
+            e.preventDefault();
+            const tipo = document.getElementById('fqCal_tipo').value;
+            const data = document.getElementById('fqCal_data').value;
+            const horario = document.getElementById('fqCal_horario').value || '09:00';
+            const descricao = document.getElementById('fqCal_descricao').value.trim();
+            if (!data) return;
+            const ordinaria = _ehReuniaoOrdinaria(data);
+            if (tipo === 'cancelada' && !ordinaria) { alert(`${_dataBR(data)} não é 2º nem 4º domingo: não há reunião fixa para cancelar.`); return; }
+            if (tipo === 'extra' && ordinaria) { alert(`${_dataBR(data)} já é dia de reunião fixa.`); return; }
+            if (tipo === 'cancelada' && FREQUENCIA_CACHE.some(r => String(r.data_reuniao).slice(0, 10) === data)
+                && !confirm('Já existe frequência lançada nesse dia. Ao cancelar, esses lançamentos deixam de contar. Continuar?')) return;
+
+            const reg = { data, tipo, horario: tipo === 'extra' ? horario : null, descricao };
+            FREQ_CALENDARIO_CACHE = FREQ_CALENDARIO_CACHE.filter(a => String(a.data).slice(0, 10) !== data).concat([reg]);
+            document.getElementById('fqCal_descricao').value = '';
+            renderListaAjustesCalendario();
+            renderFrequenciaGrid();
+            if (sb) {
+                const { error } = await sb.from('frequencia_calendario').upsert(reg, { onConflict: 'data' });
+                if (error) alert('Atenção: o ajuste não foi gravado na nuvem.\n' + error.message);
+            }
+        }
+
+        async function excluirAjusteCalendario(data) {
+            if (!confirm(`Remover o ajuste do dia ${_dataBR(data)}?`)) return;
+            FREQ_CALENDARIO_CACHE = FREQ_CALENDARIO_CACHE.filter(a => String(a.data).slice(0, 10) !== data);
+            renderListaAjustesCalendario();
+            renderFrequenciaGrid();
+            if (sb) {
+                const { error } = await sb.from('frequencia_calendario').delete().eq('data', data);
+                if (error) alert('Atenção: a remoção não foi gravada na nuvem.\n' + error.message);
+            }
+        }
+
+        // ---------- Relatório Geral de Frequência ----------
+        let _freqRelAno = String(ANO_ATUAL);
+        let _freqRelMes = 'todos';
+
+        function _opcoesAnoFrequencia(sel) {
+            return ['2026', '2027', '2028', '2029'].map(a => `<option value="${a}" ${a === String(sel) ? 'selected' : ''}>${a}</option>`).join('');
+        }
+
+        function _dadosRelatorioFrequenciaGeral() {
+            const reunioesAno = reunioesDoAno(_freqRelAno);
+            const hoje = _hojeF();
+            const reunioes = reunioesAno.filter(r => _freqRelMes === 'todos' || parseInt(r.data.slice(5, 7)) === parseInt(_freqRelMes));
+            const membros = membrosFrequencia();
+            const linhas = membros.map(m => {
+                const t = resumoFrequencia(m.id, reunioes);
+                const sit = alertasFrequencia(m.id, _freqRelAno);
+                return { m, t, sit };
+            });
+            const porReuniao = reunioes.filter(r => r.data <= hoje).map(r => {
+                const c = { F: 0, J: 0, NJ: 0, lanc: 0 };
+                membros.forEach(m => { const reg = _registroFrequencia(m.id, r.data); if (reg && c[reg.status] !== undefined) { c[reg.status]++; c.lanc++; } });
+                return { r, c, presenca: _pct(c.F, c.lanc) };
+            });
+            const somaF = linhas.reduce((s, x) => s + x.t.F, 0);
+            const somaLanc = linhas.reduce((s, x) => s + x.t.lancadas, 0);
+            return {
+                reunioesAno, reunioes, linhas, porReuniao,
+                realizadas: reunioes.filter(r => r.data <= hoje).length,
+                limite: Math.floor(reunioesAno.length * FREQ_LIMITE_JUSTIFICADAS),
+                presencaMedia: _pct(somaF, somaLanc),
+                emAlerta: linhas.filter(x => x.sit.alertas.length).length
+            };
+        }
+
+        function renderRelatorioFrequenciaGeral() {
+            const c = document.getElementById('relatorioContainer');
+            const d = _dadosRelatorioFrequenciaGeral();
+            const periodo = _freqRelMes === 'todos' ? `Ano de ${_freqRelAno}` : `${MESES_NOMES[parseInt(_freqRelMes)]} de ${_freqRelAno}`;
+            c.innerHTML = `
+                <div class="space-y-5">
+                    <div class="flex flex-wrap justify-between items-center gap-2 no-print">
+                        <h3 class="font-bold text-lg text-slate-800">Relatório Geral de Frequência</h3>
+                        <div class="flex gap-2">
+                            <button onclick="exportarExcelFrequenciaGeral()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-sm">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Baixar em Excel (.xlsx)
+                            </button>
+                            <button onclick="window.print()" class="bg-[#6e473b] text-white px-4 py-2 rounded-lg text-sm font-semibold">🖨️ Imprimir / PDF</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-4 no-print">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Ano:</label>
+                            <select onchange="_freqRelAno=this.value; renderRelatorioFrequenciaGeral()" class="border border-slate-300 rounded-lg p-2 text-sm">${_opcoesAnoFrequencia(_freqRelAno)}</select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Período:</label>
+                            <select onchange="_freqRelMes=this.value; renderRelatorioFrequenciaGeral()" class="border border-slate-300 rounded-lg p-2 text-sm">
+                                <option value="todos" ${_freqRelMes === 'todos' ? 'selected' : ''}>Ano inteiro</option>
+                                ${MESES_NOMES.slice(1).map((n, i) => `<option value="${i + 1}" ${String(_freqRelMes) === String(i + 1) ? 'selected' : ''}>${n}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-sm text-slate-700">
+                        <strong>Comunidade Alegria da Sagrada Face — Regional São João da Cruz (OCDS)</strong><br>
+                        Frequência às reuniões · ${periodo}
+                    </div>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-center">
+                        <div class="p-3 rounded-lg border bg-slate-50"><div class="text-xs text-slate-500 uppercase font-semibold">Reuniões no período</div><div class="text-xl font-bold">${d.realizadas} <span class="text-xs font-normal text-slate-500">de ${d.reunioes.length}</span></div><div class="text-[10px] text-slate-400">realizadas até hoje</div></div>
+                        <div class="p-3 rounded-lg border bg-emerald-50"><div class="text-xs text-slate-500 uppercase font-semibold">Presença média</div><div class="text-xl font-bold text-emerald-700">${_pctTxt(d.presencaMedia)}</div></div>
+                        <div class="p-3 rounded-lg border bg-amber-50"><div class="text-xs text-slate-500 uppercase font-semibold">Limite de justificadas</div><div class="text-xl font-bold text-amber-700">${d.limite}</div><div class="text-[10px] text-slate-400">30% de ${d.reunioesAno.length} reuniões do ano</div></div>
+                        <div class="p-3 rounded-lg border bg-red-50"><div class="text-xs text-slate-500 uppercase font-semibold">Membros em alerta</div><div class="text-xl font-bold text-red-700">${d.emAlerta}</div></div>
+                    </div>
+                    <div class="overflow-x-auto border rounded-lg">
+                        <table class="w-full text-left" id="tabelaFrequenciaGeral">
+                            <thead class="bg-slate-100 text-slate-700 text-xs font-bold uppercase">
+                                <tr><th class="p-2 w-10">Nº</th><th class="p-2">Membro</th><th class="p-2">Etapa</th><th class="p-2 text-center">Lançadas</th><th class="p-2 text-center">F</th><th class="p-2 text-center">J</th><th class="p-2 text-center">NJ</th><th class="p-2 text-center">Presença</th><th class="p-2 text-center">J no ano / limite</th><th class="p-2">Situação</th></tr>
+                            </thead>
+                            <tbody>
+                                ${d.linhas.map((x, i) => `
+                                    <tr class="border-b text-xs ${x.sit.alertas.some(a => a.nivel === 'alto') ? 'bg-red-50/50' : ''}">
+                                        <td class="p-2 text-slate-500">${i + 1}</td>
+                                        <td class="p-2 font-semibold">${_escF(x.m.nome)}</td>
+                                        <td class="p-2">${_etapaMembro(x.m)}</td>
+                                        <td class="p-2 text-center">${x.t.lancadas}</td>
+                                        <td class="p-2 text-center font-bold text-emerald-700">${x.t.F}</td>
+                                        <td class="p-2 text-center font-bold text-amber-700">${x.t.J}</td>
+                                        <td class="p-2 text-center font-bold text-red-700">${x.t.NJ}</td>
+                                        <td class="p-2 text-center font-bold">${_pctTxt(x.t.presenca)}</td>
+                                        <td class="p-2 text-center">${x.sit.totais.J} / ${x.sit.limite}</td>
+                                        <td class="p-2 text-[11px]">${_badgesAlertas(x.sit.alertas)}</td>
+                                    </tr>`).join('') || '<tr><td colspan="10" class="p-4 text-center text-slate-400">Nenhum membro ativo.</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-[#6e473b] uppercase tracking-wide mb-2">Presença por reunião</h4>
+                        <div class="overflow-x-auto border rounded-lg">
+                            <table class="w-full text-left text-xs" id="tabelaFrequenciaPorReuniao">
+                                <thead class="bg-slate-100 text-slate-700 font-bold uppercase">
+                                    <tr><th class="p-2">Data</th><th class="p-2">Horário</th><th class="p-2">Reunião</th><th class="p-2 text-center">F</th><th class="p-2 text-center">J</th><th class="p-2 text-center">NJ</th><th class="p-2 text-center">Presença</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${d.porReuniao.map(x => `
+                                        <tr class="border-b">
+                                            <td class="p-2 font-semibold">${_dataBR(x.r.data)}</td>
+                                            <td class="p-2">${_horaBR(x.r.horario)}</td>
+                                            <td class="p-2">${_escF(x.r.descricao)}</td>
+                                            <td class="p-2 text-center">${x.c.F}</td>
+                                            <td class="p-2 text-center">${x.c.J}</td>
+                                            <td class="p-2 text-center">${x.c.NJ}</td>
+                                            <td class="p-2 text-center font-bold">${x.c.lanc ? _pctTxt(x.presenca) : 'sem lançamento'}</td>
+                                        </tr>`).join('') || '<tr><td colspan="7" class="p-4 text-center text-slate-400">Nenhuma reunião realizada no período.</td></tr>'}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-500 border-t pt-3">
+                        Presença = F ÷ reuniões lançadas. Limite de 30% de ausências justificadas nas atividades anuais programadas (Estatuto Particular, Art. 40).
+                        Falta não justificada: o Presidente contata o membro e, se necessário, leva o assunto ao Conselho (Art. 41).
+                        Mais de 6 meses sem comparecer nem justificar: membro inativo (Art. 50). Entram na conta apenas os membros Ativos.
+                    </p>
+                </div>`;
+            lucide.createIcons();
+        }
+
+        function exportarExcelFrequenciaGeral() {
+            const d = _dadosRelatorioFrequenciaGeral();
+            const membros = d.linhas.map((x, i) => ({
+                'Nº': i + 1, 'Membro': x.m.nome, 'Etapa': _etapaMembro(x.m), 'Reuniões lançadas': x.t.lancadas,
+                'F': x.t.F, 'J': x.t.J, 'NJ': x.t.NJ, 'Presença (%)': x.t.presenca === null ? '' : x.t.presenca,
+                'J no ano': x.sit.totais.J, 'Limite J no ano': x.sit.limite,
+                'Situação': x.sit.alertas.length ? x.sit.alertas.map(a => a.texto).join(' | ') : 'Regular'
+            }));
+            const reunioes = d.porReuniao.map(x => ({
+                'Data': _dataBR(x.r.data), 'Horário': _horaBR(x.r.horario), 'Reunião': x.r.descricao,
+                'F': x.c.F, 'J': x.c.J, 'NJ': x.c.NJ, 'Presença (%)': x.c.lanc ? x.presenca : ''
+            }));
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(membros), 'Por membro');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(reunioes), 'Por reunião');
+            const sufixo = _freqRelMes === 'todos' ? _freqRelAno : `${String(_freqRelMes).padStart(2, '0')}-${_freqRelAno}`;
+            XLSX.writeFile(wb, `Frequencia_Geral_Alegria_Sagrada_Face_${sufixo}.xlsx`);
+        }
+
+        // ---------- Relatório Individual de Frequência ----------
+        let _freqIndMembroId = null;
+        let _freqIndAno = String(ANO_ATUAL);
+
+        function renderRelatorioFrequenciaIndividual() {
+            const c = document.getElementById('relatorioContainer');
+            const membros = [...getMembros()].sort((a, b) => (a.status === 'Ativo' ? 0 : 1) - (b.status === 'Ativo' ? 0 : 1) || String(a.nome).localeCompare(String(b.nome)));
+            if (!membros.length) { c.innerHTML = '<p class="text-sm text-slate-500 text-center py-8">Nenhum membro cadastrado.</p>'; return; }
+            if (_freqIndMembroId === null || !membros.some(m => String(m.id) === String(_freqIndMembroId))) _freqIndMembroId = membros[0].id;
+            const m = membros.find(x => String(x.id) === String(_freqIndMembroId));
+            const reunioes = reunioesDoAno(_freqIndAno);
+            const hoje = _hojeF();
+            const sit = alertasFrequencia(m.id, _freqIndAno);
+            const t = sit.totais;
+            const brasao = (document.querySelector('.brasao-slot img') || {}).src || '';
+            c.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex flex-wrap justify-between items-center gap-2 no-print">
+                        <h3 class="font-bold text-lg text-slate-800">Frequência Individual do Membro</h3>
+                        <div class="flex gap-2">
+                            <button onclick="exportarExcelFrequenciaIndividual()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-sm">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Baixar em Excel (.xlsx)
+                            </button>
+                            <button onclick="window.print()" class="bg-[#6e473b] text-white px-4 py-2 rounded-lg text-sm font-semibold">🖨️ Imprimir / PDF</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-4 no-print">
+                        <div class="flex-1 min-w-[220px] max-w-md">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Membro:</label>
+                            <select onchange="_freqIndMembroId=this.value; renderRelatorioFrequenciaIndividual()" class="border border-slate-300 rounded-lg p-2 text-sm w-full">
+                                ${membros.map(x => `<option value="${_escF(x.id)}" ${String(x.id) === String(m.id) ? 'selected' : ''}>${_escF(x.nome)}${x.status !== 'Ativo' ? ' (' + _escF(x.status) + ')' : ''}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Ano:</label>
+                            <select onchange="_freqIndAno=this.value; renderRelatorioFrequenciaIndividual()" class="border border-slate-300 rounded-lg p-2 text-sm">${_opcoesAnoFrequencia(_freqIndAno)}</select>
+                        </div>
+                    </div>
+                    <div class="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-xl border border-slate-200 container-print">
+                        <div class="flex items-center justify-between border-b pb-4 mb-5">
+                            <div class="flex items-center gap-3">
+                                ${brasao ? `<div class="h-16 w-14 flex items-center justify-center shrink-0"><img src="${brasao}" alt="Brasão OCDS - Província São José" class="h-full w-auto max-h-full object-contain"></div>` : ''}
+                                <div>
+                                    <h2 class="text-base font-bold text-[#6e473b] uppercase tracking-wider">Comunidade Alegria da Sagrada Face</h2>
+                                    <h4 class="text-xs font-semibold text-slate-500">Regional São João da Cruz — OCDS</h4>
+                                </div>
+                            </div>
+                            <div class="inline-block bg-amber-100 text-[#6e473b] font-bold text-xs px-3 py-1 rounded-full uppercase">Frequência ${_freqIndAno}</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 text-sm mb-5">
+                            <div><strong class="text-xs text-slate-500 uppercase block">Nome</strong> <span class="font-bold">${_escF(m.nome)}</span></div>
+                            <div><strong class="text-xs text-slate-500 uppercase block">Nome Religioso</strong> <span class="italic text-[#6e473b]">${_escF(m.nome_religioso) || '—'}</span></div>
+                            <div><strong class="text-xs text-slate-500 uppercase block">Etapa</strong> ${_etapaMembro(m)}</div>
+                            <div><strong class="text-xs text-slate-500 uppercase block">Status</strong> ${_escF(m.status)}</div>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center mb-4">
+                            <div class="p-2 rounded border bg-slate-50"><div class="text-[10px] uppercase text-slate-500 font-semibold">Lançadas</div><div class="text-lg font-bold">${t.lancadas} <span class="text-xs font-normal text-slate-500">de ${reunioes.length}</span></div></div>
+                            <div class="p-2 rounded border bg-emerald-50"><div class="text-[10px] uppercase text-slate-500 font-semibold">F</div><div class="text-lg font-bold text-emerald-700">${t.F}</div></div>
+                            <div class="p-2 rounded border bg-amber-50"><div class="text-[10px] uppercase text-slate-500 font-semibold">J / limite</div><div class="text-lg font-bold text-amber-700">${t.J} / ${sit.limite}</div></div>
+                            <div class="p-2 rounded border bg-red-50"><div class="text-[10px] uppercase text-slate-500 font-semibold">NJ</div><div class="text-lg font-bold text-red-700">${t.NJ}</div></div>
+                            <div class="p-2 rounded border bg-slate-50"><div class="text-[10px] uppercase text-slate-500 font-semibold">Presença</div><div class="text-lg font-bold">${_pctTxt(t.presenca)}</div></div>
+                        </div>
+                        <div class="text-xs mb-4 p-3 rounded border bg-slate-50">${_badgesAlertas(sit.alertas)}</div>
+                        <table class="w-full text-xs border border-slate-200">
+                            <thead class="bg-slate-100 font-bold uppercase text-slate-700">
+                                <tr><th class="p-2 text-left">Data</th><th class="p-2 text-left">Horário</th><th class="p-2 text-left">Reunião</th><th class="p-2 text-center">Situação</th><th class="p-2 text-left">Motivo</th></tr>
+                            </thead>
+                            <tbody>
+                                ${reunioes.map(r => {
+                                    const reg = _registroFrequencia(m.id, r.data);
+                                    const info = reg ? FREQ_STATUS_INFO[reg.status] : null;
+                                    return `
+                                    <tr class="border-b ${r.data > hoje ? 'text-slate-400' : ''}">
+                                        <td class="p-2 font-semibold">${_dataBR(r.data)}</td>
+                                        <td class="p-2">${_horaBR(r.horario)}</td>
+                                        <td class="p-2">${_escF(r.descricao)}</td>
+                                        <td class="p-2 text-center">${info ? `<span class="px-2 py-0.5 rounded ${info.classe}">${info.rotulo}</span>` : (r.data > hoje ? 'a realizar' : 'sem lançamento')}</td>
+                                        <td class="p-2">${reg && reg.motivo ? _escF(reg.motivo) : ''}</td>
+                                    </tr>`;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                        <p class="text-[10px] text-slate-500 mt-3">F = Frequente · J = Justificado · NJ = Não Justificado. Limite de 30% de ausências justificadas nas atividades anuais programadas (Estatuto Particular, Art. 40).</p>
+                        <div class="grid grid-cols-2 gap-8 mt-12 text-center text-xs">
+                            <div class="border-t border-slate-400 pt-1">Presidente da Comunidade</div>
+                            <div class="border-t border-slate-400 pt-1">Encarregado(a) da Formação</div>
+                        </div>
+                    </div>
+                </div>`;
+            lucide.createIcons();
+        }
+
+        function exportarExcelFrequenciaIndividual() {
+            const m = getMembros().find(x => String(x.id) === String(_freqIndMembroId));
+            if (!m) return;
+            const hoje = _hojeF();
+            const linhas = reunioesDoAno(_freqIndAno).map(r => {
+                const reg = _registroFrequencia(m.id, r.data);
+                return {
+                    'Data': _dataBR(r.data), 'Horário': _horaBR(r.horario), 'Reunião': r.descricao,
+                    'Situação': reg ? reg.status : (r.data > hoje ? 'a realizar' : 'sem lançamento'),
+                    'Motivo': reg && reg.motivo ? reg.motivo : ''
+                };
+            });
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(linhas), 'Frequência');
+            const nomeArq = String(m.nome).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9]+/g, '_');
+            XLSX.writeFile(wb, `Frequencia_${nomeArq}_${_freqIndAno}.xlsx`);
         }
 
         // Inicialização
